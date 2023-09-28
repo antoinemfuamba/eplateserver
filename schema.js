@@ -654,7 +654,7 @@ scalar minute
     _id: ID!
     name: String!
     enabled: Boolean!
-    restaurants: [Restaurant!]!
+    restaurants: [ID!]!
   }
 
   input SectionInput {
