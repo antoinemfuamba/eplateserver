@@ -395,13 +395,11 @@ input EmailConfigurationInput {
     _id: ID!
     name: String!
     tag: String
-    # restaurants: [Restaurant!]!
     restaurants: [ID!]!
   }
 
   type Review {
     _id: ID!
-    # FoodId: ID!
     foodId: ID!
     userId: ID!
     rating: Float!
