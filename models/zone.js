@@ -23,6 +23,10 @@ const zoneSchema = new mongoose.Schema({
 
   });
 
+  // Create a 2dsphere compound index on the "location.coordinates" field
+zoneSchema.index({ "location.coordinates": "2dsphere" });
+
+
 const Zone = mongoose.model('zone', zoneSchema);
 
 // Export the models

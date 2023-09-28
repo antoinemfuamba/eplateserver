@@ -9,7 +9,7 @@ const port = process.env.PORT || 4000;
 require('dotenv').config();
 
 // Define an array of allowed origins
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:3002'];
+const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001'];
 
 // Enable CORS for all routes
 app.use(

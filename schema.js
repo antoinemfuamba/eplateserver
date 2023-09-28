@@ -432,12 +432,13 @@ input EmailConfigurationInput {
     reason: String
     review: Review
     paidAmount: Float
+    isActive: Boolean
     orderStatus: String
     deliveryCharges: Float
     tipping: Float
     taxationAmount: Float
     createdAt: String
-    status: Boolean!
+    status: Boolean
     completionTime: String
     cancelledAt: String
     assignedAt: String
@@ -445,6 +446,7 @@ input EmailConfigurationInput {
     deliveredAt: String
     acceptedAt: String
     restaurant: Restaurant
+    zone:Zone
     paymentStatus: String
     paymentMethod: String
     orderAmount: Float

@@ -527,7 +527,7 @@ const resolvers = {
         // Fetch active orders based on restaurantId
         console.log('Before fetching active orders');
 
-        const activeOrders = await Order.find({ restaurant: restaurantId })
+        const activeOrders = await Order.find({ restaurant: restaurantId})
           .populate({
             path: 'restaurant',
             populate: {
@@ -656,7 +656,7 @@ const resolvers = {
                                         WEB QUERIES - START
     *****************************************************************************************************************************/ 
 
-    configuration: async () => {
+    /*configuration: async () => {
       try {
         // Fetch the global configuration document using the configuration_id
         const configuration_id = "global_configuration"; // Set the identifier for the global configuration
@@ -675,7 +675,7 @@ const resolvers = {
       } catch (error) {
         throw new Error('Unable to fetch configuration.');
       }
-    },
+    },*/
     //DONE
     profile: async (_,__,context) => {
           try {
@@ -811,46 +811,7 @@ const resolvers = {
         throw new Error('Failed to fetch users');
       }
     },
-    //DONE
-    getCategory: async (_, { id }) => {
-      try {
-        const category = await Category.findById(id);
-        return category;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch category');
-      }
-    },
-    //DONE
-    getCategories: async () => {
-      try {
-        const categories = await Category.find();
-        return categories;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch categories');
-      }
-    },
-    //DONE
 
-     getFood: async (_, { id }) => {
-      try {
-        const food = await Food.findById(id);
-        return food;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch food');
-      }
-    },
-    getFoods: async () => {
-      try {
-        const products = await Food.find();
-        return products;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch products');
-      }
-    },
     //DONE -PROFILE
     restaurant: async (_, { id, slug }) => {
       try {
@@ -1105,7 +1066,7 @@ const resolvers = {
     *****************************************************************************************************************************/
 
           //DONE
-          configuration: async (_, args, context) => {
+        /*  configuration: async (_, args, context) => {
                 
             try { 
               const { userId } = context;
@@ -1120,7 +1081,7 @@ const resolvers = {
           console.error(error);
           throw new Error('Failed to fetch configuration');
         }
-        },
+        },*/
         //DONE
         riderOrders: async (_, {id}) => {
             try { 
@@ -3737,6 +3698,28 @@ console.log(user);
         return addons;
       } catch (error) {
         throw new Error('Failed to fetch addons');
+      }
+    },
+    zone: async (order) => {
+      try {
+        const locationCoordinates = order.deliveryAddress.location.coordinates;
+        console.log('Location Coordinates:', locationCoordinates);
+
+        // Find the zone that contains the locationCoordinates
+        const zone = await Zone.findOne({
+          "location.coordinates": {
+            $geoIntersects: {
+              $geometry: {
+                type: 'Point',
+                coordinates: locationCoordinates,
+              },
+            },
+          },
+        });
+        return zone;
+      } catch (error) {
+        console.error('Failed to fetch zone:', error);
+        throw new Error('Failed to fetch zone');
       }
     },
   },
