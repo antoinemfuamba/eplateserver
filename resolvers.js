@@ -3848,7 +3848,6 @@ console.log(user);
   Restaurant: {
     location: async (restaurant) => {
       try {
-        console.log('Parent location:', restaurant.location);
         const location = await Locat.findById(restaurant.location);
         return location;
       } catch (error) {

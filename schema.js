@@ -661,7 +661,7 @@ scalar minute
     _id: ID
     name: String!
     enabled: Boolean!
-    restaurants: [ID!]!
+    restaurants: [Restaurant!]
   }
 
   input RiderInput {
