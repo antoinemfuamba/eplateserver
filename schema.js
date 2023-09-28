@@ -307,7 +307,7 @@ input EmailConfigurationInput {
     description: String
     quantityMinimum: Int
     quantityMaximum: Int
-    options: [String]
+    options: [Option]
     # Include other addon fields
   }
 
