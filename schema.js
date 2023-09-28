@@ -972,10 +972,11 @@ input OrderFoodInput {
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
     restaurant(id: String): Restaurant
+    restaurant(id: String, slug: String): Restaurant
     restaurantDetail(id: String): Restaurant
     restaurants: [Restaurant]!
     restaurantList: [Restaurant!]!
-    nearByRestaurants(latitude: Float!, longitude: Float!): [Restaurant]!
+    nearByRestaurants(latitude: Float, longitude: Float): RestaurantList!
     getNotification(id: ID!): Notification
     getNotifications: [Notification]!
     getReview(id: ID!): Review
