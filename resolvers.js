@@ -2848,8 +2848,8 @@ if (!existingRestaurant) {
     },
 
     sendOtpToPhoneNumber : async (_, { phone, otp }, {user}) => {
-      const accountSid = 'AC26c793cae2840280cf18fcf048a27fa4';
-      const authToken = '4c0747a4261a17bebfb6dbf3eba01e58';
+      const accountSid = process.env.TWILIO_ACCOUNTSID;
+      const authToken = process.env.TWILIO_AUTHTOKEN;
 
       const client = new twilio(accountSid, authToken);
       try {

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const mongoURL = 'mongodb+srv://munekayidev:Mfuamba0511@smartmeter.wbwpdfn.mongodb.net/feedmedb';
+const mongoURL = process.env.DATABASE_URL;
 
 mongoose
   .connect(mongoURL, { useUnifiedTopology: true, useNewUrlParser: true })
