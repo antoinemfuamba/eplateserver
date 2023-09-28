@@ -29,6 +29,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   subscriptions,
+  uri: '/graphql',
   context: ({ req }) => {
     // Get the authorization header from the request
     const authHeader = req.headers.authorization;
