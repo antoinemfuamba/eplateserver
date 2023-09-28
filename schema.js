@@ -94,6 +94,7 @@ input EmailConfigurationInput {
     createdAt: String!
     updatedAt: String!
   }
+
   type Restaurant {
     _id: ID!
     name: String
@@ -905,12 +906,22 @@ input OrderFoodInput {
     subscribePlaceOrder(restaurant: String!): PlaceOrderSubscriptionPayload
     subscriptionZoneOrders(zoneId: String!): SubscriptionZoneOrder
     subscriptionAssignRider(riderId: String!): AssignRiderPayload!
+    subscriptionRiderLocation(riderId: String!): Rider!
+    subscriptionNewMessage(order: ID!): Message!
+
   }
-  
+  type Message {
+    _id: ID!
+    message: String!
+    user: User!
+    createdAt: String!
+  }
+
   type OrderSubscriptionPayload {
     _id: ID!
     orderStatus: String
     rider: Rider
+    completionTime: String
   }
   
   type OrderStatusChangedSubscriptionPayload {
@@ -1112,12 +1123,17 @@ input OrderFoodInput {
     sendChatMessage(orderId: ID!, messageInput: ChatMessageInput!): SendChatMessageResponse
     riderLogin(username: String, password: String, notificationToken: String): AuthPayload
     updateOrderStatusRider(id: String!, status: String!): Order
+    saveNotificationTokenWeb(token: String!): NotificationTokenResponse!
+
   }
   type AssignRiderPayload {
     order: Order!
     origin: String!
   }
-
+  type NotificationTokenResponse {
+    success: Boolean!
+    message: String!
+  }
   input OfferInput {
     name: String!
     tag: String!

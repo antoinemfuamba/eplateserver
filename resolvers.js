@@ -203,26 +203,6 @@ const resolvers = {
         throw new Error('Failed to fetch sections');
       }
     },
-    nearByRestaurants: async (_, {latitude, longitude}) => {
-      try {
-        const vendors = await Restaurant.find()
-          .populate('location')
-          .where('location')
-          .near({
-            center: {
-              type: 'Point',
-              coordinates: [longitude, latitude],
-            },
-            maxDistance: 10000, // Specify the maximum distance in meters
-          })
-          .exec();
-
-        return vendors;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch vendors');
-      }
-    },
     //DONE
     restaurants: async () => {
       try {
