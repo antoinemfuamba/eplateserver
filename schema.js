@@ -653,15 +653,15 @@ scalar minute
   type Section {
     _id: ID!
     name: String!
-    enabled: Boolean!
-    restaurants: [Restaurant!]
+    enabled: Boolean
+    restaurants: [ID!]!
   }
 
   input SectionInput {
     _id: ID
     name: String!
     enabled: Boolean!
-    restaurants: [Restaurant!]
+    restaurants: [ID!]!
   }
 
   input RiderInput {
