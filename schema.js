@@ -971,7 +971,6 @@ input OrderFoodInput {
     orders(offset: Int): [Order!]!
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
-    restaurant(id: String): Restaurant
     restaurant(id: String, slug: String): Restaurant
     restaurantDetail(id: String): Restaurant
     restaurants: [Restaurant]!
