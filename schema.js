@@ -253,8 +253,7 @@ input EmailConfigurationInput {
     _id: ID!
     title: String!
     foods: [Food]
-    createdAt: String!
-    updatedAt: String!
+
     # Include other category fields
   }
   
