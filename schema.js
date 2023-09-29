@@ -481,7 +481,7 @@ input EmailConfigurationInput {
 
   type RestaurantList {
     offers: [Offer!]
-    sections: [Section!]
+    sections: [WebSection!]
     restaurants: [Restaurant!]
     options: [Option!]
     addons: [Addon]
@@ -655,6 +655,12 @@ scalar minute
     name: String!
     enabled: Boolean
     restaurants: [Restaurant!]!
+  }
+  type WebSection {
+    _id: ID!
+    name: String!
+    enabled: Boolean
+    restaurants: [ID!]!
   }
 
   input SectionInput {
