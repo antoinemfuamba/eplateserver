@@ -3756,7 +3756,12 @@ console.log(user);
       try {
         const restaurantIds = parent.restaurants.map((restaurant) => restaurant._id);
         const restaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
-        return restaurants;
+        return restaurants.map((restaurant) => ({
+          ...restaurant._doc, // Include all fields from the restaurant document
+          _id: restaurant._id.toString(),
+          name: restaurant.name,
+          __typename: 'SectionRestaurant',
+        }));
       } catch (error) {
         console.error(error);
         throw new Error('Failed to fetch restaurants');
