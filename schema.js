@@ -1064,10 +1064,10 @@ input OrderFoodInput {
       search: String
     ): [WebOrder]
     profile: User
-    userFavourite(latitude: Float, longitude: Float): [Restaurant]!
+    userFavourite(latitude: Float, longitude: Float): [WebRestaurant]!
     sendChatMessage(orderId: ID!, messageInput: ChatMessageInput!): SendChatMessageResponse!
-    orders(offset: Int): [WebOrder!]!
-    order(id: String!): WebOrder
+    orders(offset: Int): [Order!]!
+    order(id: String!): Order
     orderCount(restaurant: String!): Int!
     restaurant(id: String, slug: String): WebRestaurant
     restaurantDetail(id: String): Restaurant
