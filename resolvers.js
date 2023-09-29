@@ -3819,6 +3819,75 @@ console.log(user);
       }
     },
   },
+  WebRestaurant: {
+    //_id: (restaurant) => restaurant._id.toString(), // Convert ObjectId to string
+    location: async (restaurant) => {
+      try {
+        const location = await Locat.findById(restaurant.location);
+        return location;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch restaurant location');
+      }
+    },
+    owner: async (restaurant) => {
+      try {
+        const owner = await Vendor.findById(restaurant.owner);
+        return owner;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch owner');
+      }
+    },
+    categories: async (restaurant) => {
+      try {
+        // Fetch the categories associated with the restaurant using the restaurant's _id
+        const categories = await Category.find({ _id: { $in: restaurant.categories } });
+        return categories;
+      } catch (error) {
+        throw new Error('Failed to fetch categories');
+      }
+    },
+    options: async (restaurant) => {
+      try {
+        // Fetch the options associated with the restaurant using the restaurant's 'options' field
+        const options = await Option.find({ _id: { $in: restaurant.options } });
+        return options;
+      } catch (error) {
+        throw new Error('Failed to fetch options');
+      }
+    },
+    addons: async (restaurant) => {
+      try {
+        // Fetch the options associated with the restaurant using the restaurant's 'addons' field
+        const addons = await Addon.find({ _id: { $in: restaurant.addons } });
+        return addons;
+      } catch (error) {
+        throw new Error('Failed to fetch options');
+      }
+    },
+    openingTimes: async (restaurant) => {
+      try {
+        // Fetch the options associated with the restaurant using the restaurant's 'options' field
+        const openingTime = await OpeningTime.find({ _id: { $in: restaurant.openingTimes } });
+        return openingTime;
+      } catch (error) {
+        throw new Error('Failed to fetch addons');
+      }
+    },
+    reviewData: async (restaurant) => {
+      try {
+       
+        // Populate the array of review data
+        const populatedReviewData = await ReviewData.find({ _id: { $in: restaurant.reviewData } });
+
+        return populatedReviewData;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch review data for restaurant');
+      }
+    },
+  },
   RestaurantList: {
     // This resolver handles the "restaurants" field in the "nearByRestaurants" response
     restaurants: (parent) => parent.restaurants,
