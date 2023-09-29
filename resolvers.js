@@ -3608,6 +3608,113 @@ console.log(user);
       }
     },
   },
+  WebOrder: {
+    user: async (order) => {
+      try {
+        const customer = await User.findById(order.user);
+        return customer;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch order customer');
+      }
+    },
+    foods: async (order) => {
+      try {
+        const populatedOrder = await Order.findById(order.id).populate('foods.Food');
+        return populatedOrder.products;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch order products');
+      }
+    },
+    restaurant: async (order) => {
+      try {
+        // Fetch restaurant data based on restaurant id
+        const restaurant = await Restaurant.findById(order.restaurant);
+        return restaurant;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch restaurant');
+      }
+    },
+    deliveryAddress: async (order) => {
+      if (order.deliveryAddress && order.deliveryAddress.location) {
+        return {
+          location: {
+            coordinates: order.deliveryAddress.location.coordinates,
+            __typename: "Point",
+          },
+          deliveryAddress: order.address.deliveryAddress,
+          __typename: "OrderAddress",
+        };
+      } else {
+        // Handle the case where deliveryAddress is not properly defined
+        return null; // or handle it as needed
+      }
+    },
+    items: async (order) => {
+      try {
+        // Fetch the items associated with the order using order's items field
+        const items = await Item.find({ _id: { $in: order.items } }).populate('variation');
+        return items;
+        } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch order items');
+      }
+    }, 
+    rider: async (order) => {
+      try {
+        // Fetch the associated rider using order's rider ID
+        const rider = await Rider.findById(order.rider);
+        return rider;
+      } catch (error) {
+        throw new Error('Failed to fetch rider');
+      }
+    },
+    review: async (order) => {
+      if (order.review) {
+        try {
+          const review = await Review.findById(order.review);
+          return review;
+        } catch (error) {
+          throw new Error('Failed to fetch review');
+        }
+      } else {
+        return null;
+      }
+    },
+    addons: async (order) => {
+      try {
+        // Fetch the options associated with the restaurant using the restaurant's 'options' field
+        const addons = await Addon.find({ _id: { $in: order.addons } });
+        return addons;
+      } catch (error) {
+        throw new Error('Failed to fetch addons');
+      }
+    },
+    zone: async (order) => {
+      try {
+        const locationCoordinates = order.deliveryAddress.location.coordinates;
+        console.log('Location Coordinates:', locationCoordinates);
+
+        // Find the zone that contains the locationCoordinates
+        const zone = await Zone.findOne({
+          "location.coordinates": {
+            $geoIntersects: {
+              $geometry: {
+                type: 'Point',
+                coordinates: locationCoordinates,
+              },
+            },
+          },
+        });
+        return zone;
+      } catch (error) {
+        console.error('Failed to fetch zone:', error);
+        throw new Error('Failed to fetch zone');
+      }
+    },
+  },
   Food: {
     restaurant: async (food) => {
       try {

@@ -460,6 +460,7 @@ input EmailConfigurationInput {
     updatedAt: String!
     # Include other review fields
   }
+
   type Order {
     _id: ID!
     orderId: String
@@ -467,6 +468,44 @@ input EmailConfigurationInput {
     items: [OrderItem]
     user: User
     addons: [Addon]
+    rider: Rider
+    reason: String
+    review: Review
+    paidAmount: Float
+    isActive: Boolean
+    orderStatus: String
+    deliveryCharges: Float
+    tipping: Float
+    taxationAmount: Float
+    createdAt: String
+    status: Boolean
+    completionTime: String
+    cancelledAt: String
+    assignedAt: String
+    foods: [OrderFood]!
+    deliveredAt: String
+    acceptedAt: String
+    restaurant: Restaurant
+    zone:Zone
+    paymentStatus: String
+    paymentMethod: String
+    orderAmount: Float
+    orderDate: String
+    pickedAt: String
+    expectedTime: String
+    isPickedUp: Boolean
+    isRiderRinged: Boolean
+    preparationTime: String
+  }
+
+  
+  type WebOrder {
+    _id: ID!
+    orderId: String
+    deliveryAddress: DeliveryAddress
+    items: [OrderItem]
+    user: User
+    addons: [String]
     rider: Rider
     reason: String
     review: Review
@@ -1105,7 +1144,7 @@ input OrderFoodInput {
       orderDate: String!
       isPickedUp: Boolean!
       deliveryCharges: Float!
-    ): Order!
+    ): WebOrder!
     deleteZone(id: String!): Zone
     updatePaymentStatus(id: String!, status: String!): Payment
     toggleAvailability(_id: String): Rider
