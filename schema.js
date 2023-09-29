@@ -361,6 +361,13 @@ input EmailConfigurationInput {
     quantityMaximum: Int!
     options: [String]!
   }
+  input WebAddonInput {
+    title: String!
+    description: String!
+    quantityMinimum: Int!
+    quantityMaximum: Int!
+    options: [Option]!
+  }
 
   type AddonOption {
     _id: ID!

@@ -4033,10 +4033,10 @@ console.log(user);
     deliveryRate: (configuration) => configuration.deliveryRate,
   },
   WebAddon: {
-    options: async (addons) => {
+    options: async (webaddons) => {
       try {
         // Fetch the options associated with the addon using the addon's 'options' field
-        const populatedOptions = await Option.find({ _id: { $in: addons.options } });
+        const populatedOptions = await Option.find({ _id: { $in: webaddons.options } });
   
       return populatedOptions;
       } catch (error) {
