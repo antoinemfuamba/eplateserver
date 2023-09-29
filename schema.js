@@ -207,11 +207,11 @@ input EmailConfigurationInput {
     _id: ID!
     total: String
     ratings: String
-    reviews: [Review!]!
+    reviews: [Review]
     # Include other reviewData fields
   }
   input ReviewDataInput {
-    _id: ID!
+    id: ID!
     total: String
     ratings: String
     reviews: [ReviewInput]
@@ -415,7 +415,7 @@ input EmailConfigurationInput {
     updatedAt: String!
   }
   input ReviewInput {
-    _id: ID!
+    id: ID!
     FoodId: ID!
     userId: ID!
     rating: Float!
