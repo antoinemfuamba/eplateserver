@@ -3774,8 +3774,6 @@ console.log(user);
       try {
         // Fetch the categories associated with the restaurant using the restaurant's _id
         const categories = await Category.find({ _id: { $in: restaurant.categories } });
-        console.log('Categories found:', categories);
-
         return categories;
       } catch (error) {
         throw new Error('Failed to fetch categories');
@@ -3806,15 +3804,6 @@ console.log(user);
         return openingTime;
       } catch (error) {
         throw new Error('Failed to fetch addons');
-      }
-    },
-    foods: async (restaurant) => {
-      try {
-        // Fetch the foods associated with the restaurant using the restaurant's 'foods' field
-        const foods = await Food.find({ _id: { $in: restaurant.foods } });
-        return foods;
-      } catch (error) {
-        throw new Error('Failed to fetch foods');
       }
     },
     reviewData: async (restaurant) => {
