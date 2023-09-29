@@ -3774,6 +3774,8 @@ console.log(user);
       try {
         // Fetch the categories associated with the restaurant using the restaurant's _id
         const categories = await Category.find({ _id: { $in: restaurant.categories } });
+        console.log('Categories found:', categories);
+
         return categories;
       } catch (error) {
         throw new Error('Failed to fetch categories');
