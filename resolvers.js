@@ -3609,42 +3609,42 @@ console.log(user);
     },
   },
   WebOrder: {
-    user: async (order) => {
+    user: async (weborder) => {
       try {
-        const customer = await User.findById(order.user);
+        const customer = await User.findById(weborder.user);
         return customer;
       } catch (error) {
         console.error(error);
         throw new Error('Failed to fetch order customer');
       }
     },
-    foods: async (order) => {
+    foods: async (weborder) => {
       try {
-        const populatedOrder = await Order.findById(order.id).populate('foods.Food');
+        const populatedOrder = await Order.findById(weborder.id).populate('foods.Food');
         return populatedOrder.products;
       } catch (error) {
         console.error(error);
         throw new Error('Failed to fetch order products');
       }
     },
-    restaurant: async (order) => {
+    restaurant: async (weborder) => {
       try {
         // Fetch restaurant data based on restaurant id
-        const restaurant = await Restaurant.findById(order.restaurant);
+        const restaurant = await Restaurant.findById(weborder.restaurant);
         return restaurant;
       } catch (error) {
         console.error(error);
         throw new Error('Failed to fetch restaurant');
       }
     },
-    deliveryAddress: async (order) => {
-      if (order.deliveryAddress && order.deliveryAddress.location) {
+    deliveryAddress: async (weborder) => {
+      if (weborder.deliveryAddress && order.deliveryAddress.location) {
         return {
           location: {
-            coordinates: order.deliveryAddress.location.coordinates,
+            coordinates: weborder.deliveryAddress.location.coordinates,
             __typename: "Point",
           },
-          deliveryAddress: order.address.deliveryAddress,
+          deliveryAddress: weborder.address.deliveryAddress,
           __typename: "OrderAddress",
         };
       } else {
@@ -3652,29 +3652,29 @@ console.log(user);
         return null; // or handle it as needed
       }
     },
-    items: async (order) => {
+    items: async (weborder) => {
       try {
         // Fetch the items associated with the order using order's items field
-        const items = await Item.find({ _id: { $in: order.items } }).populate('variation');
+        const items = await Item.find({ _id: { $in: weborder.items } }).populate('variation');
         return items;
         } catch (error) {
         console.error(error);
         throw new Error('Failed to fetch order items');
       }
     }, 
-    rider: async (order) => {
+    rider: async (weborder) => {
       try {
         // Fetch the associated rider using order's rider ID
-        const rider = await Rider.findById(order.rider);
+        const rider = await Rider.findById(weborder.rider);
         return rider;
       } catch (error) {
         throw new Error('Failed to fetch rider');
       }
     },
-    review: async (order) => {
-      if (order.review) {
+    review: async (weborder) => {
+      if (weborder.review) {
         try {
-          const review = await Review.findById(order.review);
+          const review = await Review.findById(weborder.review);
           return review;
         } catch (error) {
           throw new Error('Failed to fetch review');
@@ -3683,18 +3683,18 @@ console.log(user);
         return null;
       }
     },
-    addons: async (order) => {
+    addons: async (weborder) => {
       try {
         // Fetch the options associated with the restaurant using the restaurant's 'options' field
-        const addons = await Addon.find({ _id: { $in: order.addons } });
+        const addons = await Addon.find({ _id: { $in: weborder.addons } });
         return addons;
       } catch (error) {
         throw new Error('Failed to fetch addons');
       }
     },
-    zone: async (order) => {
+    zone: async (weborder) => {
       try {
-        const locationCoordinates = order.deliveryAddress.location.coordinates;
+        const locationCoordinates = weborder.deliveryAddress.location.coordinates;
         console.log('Location Coordinates:', locationCoordinates);
 
         // Find the zone that contains the locationCoordinates
