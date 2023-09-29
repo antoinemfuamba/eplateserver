@@ -208,8 +208,6 @@ input EmailConfigurationInput {
     total: String
     ratings: String
     reviews: [Review!]!
-    createdAt: String!
-    updatedAt: String!
     # Include other reviewData fields
   }
   input ReviewDataInput {
