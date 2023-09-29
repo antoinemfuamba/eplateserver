@@ -119,7 +119,7 @@ input EmailConfigurationInput {
     owner: Vendor
     isActive: Boolean
     foods: [Food]
-    reviewData: [ReviewData!]
+    reviewData: ReviewData
     categories: [Category!]
     options: [Option!]
     addons: [Addon]
