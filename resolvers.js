@@ -214,7 +214,7 @@ const resolvers = {
       }
     },
     //DONE -The categories-The Option
-    restaurant: async (_, { id }) => {
+    restaurantin: async (_, { id }) => {
       try {
         const restaurant = await Restaurant.findById(id)
         .populate({
@@ -241,7 +241,7 @@ const resolvers = {
     },
     
     //DONE -PROFILE (Vendor: This, deliverybounds and openingtimes )
-    restaurant: async (_, { id }) => {
+    restaurantin: async (_, { id }) => {
       try {
         const restaurant = await Restaurant.findById(id)
           .populate('location')

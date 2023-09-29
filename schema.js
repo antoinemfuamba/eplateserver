@@ -450,6 +450,7 @@ input EmailConfigurationInput {
     rating: Float!
     review: String!   
     order: Order!
+    restaurant: Restaurant
     description: String!                                 
     createdAt: String!
     updatedAt: String!
@@ -1062,13 +1063,14 @@ input OrderFoodInput {
       page: Int
       rows: Int
       search: String
-    ): [WebOrder]
+    ): [Order]
     profile: User
     userFavourite(latitude: Float, longitude: Float): [WebRestaurant]!
     sendChatMessage(orderId: ID!, messageInput: ChatMessageInput!): SendChatMessageResponse!
     orders(offset: Int): [Order!]!
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
+    restaurantin(id: String): Restaurant
     restaurant(id: String, slug: String): WebRestaurant
     restaurantDetail(id: String): Restaurant
     restaurants: [Restaurant]!
