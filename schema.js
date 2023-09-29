@@ -866,7 +866,7 @@ scalar minute
     image: String
     quantity: Int
     variation: VariationInput
-    addons: [AddonInput]
+    addons: [WebAddonInput]
     food: String
     specialInstructions: String
     isActive: Boolean
@@ -904,7 +904,7 @@ scalar minute
     image: String
     quantity: Int
     variation: Variation
-    addons: [Addon]
+    addons: [WebAddon]
     specialInstructions: String
     isActive: Boolean
     createdAt: String
