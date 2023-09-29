@@ -410,7 +410,6 @@ input EmailConfigurationInput {
     rating: Float!
     review: String!   
     order: Order!
-    restaurant: Restaurant!
     description: String!                                 
     createdAt: String!
     updatedAt: String!
