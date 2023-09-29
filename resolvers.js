@@ -3663,7 +3663,7 @@ console.log(user);
       }
     },
   },
-  Section: {
+  WebSection: {
     restaurants: async (parent) => {
       try {
         const restaurantIds = parent.restaurants.map((restaurant) => restaurant._id);
