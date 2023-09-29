@@ -851,7 +851,7 @@ scalar minute
     quantity: Int
     variation: Variation
     food: String
-    addons: [Addon]
+    addons: [WebAddon]
     specialInstructions: String
     reviewData: ReviewData
     isActive: Boolean
