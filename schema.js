@@ -353,18 +353,15 @@ input EmailConfigurationInput {
     options: [Option]
     # Include other addon fields
   }
+
   input AddonInput {
-    restaurant: String!
-    addons: [AddonInputItem!]!
+    title: String!
+    description: String!
+    quantityMinimum: Int!
+    quantityMaximum: Int!
+    options: [String]!
   }
 
-  input AddonInputItem {
-    title: String
-    description: String
-    quantityMinimum: Int
-    quantityMaximum: Int
-    options: [String]
-  }
   type AddonOption {
     _id: ID!
     title: String
@@ -921,7 +918,7 @@ input OrderFoodInput {
     food: ID!
     quantity: Int!
     variation: ID # Include this field if variations are allowed
-    addons: [String] # Include this field if addons are allowed
+    addons: [ID] # Include this field if addons are allowed
     specialInstructions: String
   }
   type DashboardOrder {
