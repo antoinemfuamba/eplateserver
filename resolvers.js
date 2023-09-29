@@ -968,16 +968,6 @@ const resolvers = {
       }
     },
     //DONE
-    getAddon: async (_, { id }) => {
-      // Retrieve and return the Addon with the provided ID
-      return Addon.findById(id);
-    },
-    //DONE
-    getAddons: async () => {
-      // Retrieve and return all Addons
-      return Addon.find();
-    },
-    //DONE
     getZone: async (_, { id }) => {
       // Retrieve and return the Zone with the provided ID
       return Zone.findById(id);
@@ -3878,9 +3868,12 @@ console.log(user);
   Addon: {
     options: async (addons) => {
       try {
-        // Fetch the options associated with the addon using the addon's 'options' field
-        const populatedOptions = await Option.find({ _id: { $in: addons.options } });
-  
+      // Map the addon IDs from the array of addons
+      const addonIds = addons.map((addon) => addon._id);
+
+      // Fetch the options associated with the addon IDs
+      const populatedOptions = await Option.find({ _id: { $in: addonIds } });
+
       return populatedOptions;
       } catch (error) {
         throw new Error('Failed to fetch options');
