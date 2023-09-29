@@ -781,17 +781,6 @@ const resolvers = {
         throw new Error(`Failed to fetch rider: ${error.message}`);
       }
     },
-    //DONE
-    getUsers: async () => {
-      try {
-        const users = await User.find();
-        return users;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to fetch users');
-      }
-    },
-
     //DONE -PROFILE
     restaurant: async (_, { id, slug }) => {
       try {
@@ -823,26 +812,6 @@ const resolvers = {
         console.error(error);
         throw new Error('Failed to fetch restaurant');
       }
-    },
-    //DONE
-    getOption: async (_, { id }) => {
-      // Retrieve and return the Option with the provided ID
-      return Option.findById(id);
-    },
-    //DONE
-    getOptions: async () => {
-      // Retrieve and return all Options
-      return Option.find();
-    },
-    //DONE
-    getSection: async (_, { id }) => {
-      // Retrieve and return the Section with the provided ID
-      return Section.findById(id);
-    },
-    //DONE
-    getSections: async () => {
-      // Retrieve and return all Sections
-      return Section.find();
     },
     //DONE
     nearByRestaurants: async (_, { longitude, latitude }) => {
