@@ -848,9 +848,7 @@ const resolvers = {
       // If the distance is less than or equal to the maximum distance, include the restaurant in nearbyRestaurants
       if (distance <= maxDistance) {
             // Exclude __typename from the restaurant data
-    const cleanedRestaurant = { ...restaurant._doc };
-    delete cleanedRestaurant.__typename;
-        nearbyRestaurants.push(cleanedRestaurant);
+        nearbyRestaurants.push(restaurant);
       }
     }
     // Fetch offers for all nearby restaurants in parallel
@@ -3166,52 +3164,6 @@ if (!existingRestaurant) {
         throw new Error('Failed to edit Address');
       }
     },
-    createOrder: async (_, { customerId, foods, totalPrice, deliveryAddress }) => {
-      try {
-        const order = await Order.create({ customer: customerId, foods, totalPrice, deliveryAddress });
-        return order;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to create order');
-      }
-    },
-    createFood: async (_, { name, price, description, vendorId }) => {
-      try {
-        const food = await Food.create({ name, price, description, vendor: vendorId });
-        return food;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to create food');
-      }
-    },
-   
-    createPromotion: async (_, { promotionCode, discountPercentage, expirationDate, associatedFoods }) => {
-      try {
-        const promotion = await Promotion.create({ promotionCode, discountPercentage, expirationDate, associatedFoods });
-        return promotion;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to create promotion');
-      }
-    },
-    createReview: async (_, { foodId, userId, rating, review }) => {
-      try {
-        const review = await Review.create({ foodId, userId, rating, review });
-        return review;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to create review');
-      }
-    },
-    createNotification: async (_, { recipient, message, status }) => {
-      try {
-        const notification = await Notification.create({ recipient, message, status });
-        return notification;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to create notification');
-      }
-    },
 
     //Done
   login: async (_, { email, password }) => {
@@ -3266,15 +3218,6 @@ if (!existingRestaurant) {
       console.error(error);
       throw new Error('Failed to check email existence');
     }
-  },
-  //DONE
-  createSection: async (_, { name, restaurants }) => {
-    // Create a new Section with the provided data
-    const section = new Section({ name, restaurants });
-    // Save the section to the database
-    await section.save();
-    // Return the created Section
-    return section;
   },
     //Done
     phoneExist: async (_, { phone}, context) => {
@@ -3726,7 +3669,6 @@ console.log(user);
         const restaurantIds = parent.restaurants.map((restaurant) => restaurant._id);
         const restaurants = await Restaurant.find({ _id: { $in: restaurantIds } });
         return restaurants.map((restaurant) => ({
-          ...restaurant._doc, // Include all fields from the restaurant document
           _id: restaurant._id.toString(),
           name: restaurant.name,
           __typename: 'SectionRestaurant',
@@ -3819,6 +3761,7 @@ console.log(user);
     },
   },
   Restaurant: {
+    _id: (restaurant) => restaurant._id.toString(), // Convert ObjectId to string
     location: async (restaurant) => {
       try {
         const location = await Locat.findById(restaurant.location);
