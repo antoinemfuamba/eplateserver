@@ -131,6 +131,42 @@ input EmailConfigurationInput {
     createdAt: String!
     updatedAt: String!
   }
+  type WebRestaurant {
+    _id: ID!
+    name: String
+    username: String
+    password: String
+    email: String
+    sections: [Section!]
+    offers: [Offer!]
+    orderId: Int
+    orderPrefix: String
+    image: String
+    slug: String
+    location: Location
+    deliveryBounds: Coordinates
+    address: String
+    userType: String!
+    deliveryTime: Int
+    minimumOrder: Int
+    salesTax: Float
+    tax: Float
+    commissionRate: String
+    owner: Vendor
+    isActive: Boolean
+    foods: [Food]
+    reviewData: ReviewData
+    categories: [Category!]
+    options: [Option!]
+    addons: [WebAddon]
+    zone: Zone
+    rating: String
+    stripeDetailsSubmitted: Boolean
+    isAvailable: Boolean
+    openingTimes: [OpeningTime]
+    createdAt: String!
+    updatedAt: String!
+  }
 
   type Variation {
     _id: ID!
@@ -990,7 +1026,7 @@ input OrderFoodInput {
     orders(offset: Int): [Order!]!
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
-    restaurant(id: String, slug: String): Restaurant
+    restaurant(id: String, slug: String): WebRestaurant
     restaurantDetail(id: String): Restaurant
     restaurants: [Restaurant]!
     restaurantList: [Restaurant!]!
