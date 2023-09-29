@@ -921,7 +921,7 @@ input OrderFoodInput {
     food: ID!
     quantity: Int!
     variation: ID # Include this field if variations are allowed
-    addons: [ID] # Include this field if addons are allowed
+    addons: [String] # Include this field if addons are allowed
     specialInstructions: String
   }
   type DashboardOrder {
@@ -1144,7 +1144,7 @@ input OrderFoodInput {
       orderDate: String!
       isPickedUp: Boolean!
       deliveryCharges: Float!
-    ): WebOrder!
+    ): Order!
     deleteZone(id: String!): Zone
     updatePaymentStatus(id: String!, status: String!): Payment
     toggleAvailability(_id: String): Rider
