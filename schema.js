@@ -502,7 +502,7 @@ input EmailConfigurationInput {
     deliveryAddress: DeliveryAddress
     items: [OrderItem]
     user: User
-    addons: [String]
+    addons: [WebAddon]
     rider: Rider
     reason: String
     review: Review
@@ -1059,7 +1059,7 @@ input OrderFoodInput {
     profile: User
     userFavourite(latitude: Float, longitude: Float): [Restaurant]!
     sendChatMessage(orderId: ID!, messageInput: ChatMessageInput!): SendChatMessageResponse!
-    orders(offset: Int): [Order!]!
+    orders(offset: Int): [WebOrder!]!
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
     restaurant(id: String, slug: String): WebRestaurant
