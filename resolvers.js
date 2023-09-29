@@ -3865,15 +3865,12 @@ console.log(user);
     currencySymbol: (configuration) => configuration.currencySymbol,
     deliveryRate: (configuration) => configuration.deliveryRate,
   },
-  Addon: {
+  WebAddon: {
     options: async (addons) => {
       try {
-      // Map the addon IDs from the array of addons
-      const addonIds = addons.map((addon) => addon._id);
-
-      // Fetch the options associated with the addon IDs
-      const populatedOptions = await Option.find({ _id: { $in: addonIds } });
-
+        // Fetch the options associated with the addon using the addon's 'options' field
+        const populatedOptions = await Option.find({ _id: { $in: addons.options } });
+  
       return populatedOptions;
       } catch (error) {
         throw new Error('Failed to fetch options');

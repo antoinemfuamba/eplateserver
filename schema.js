@@ -308,10 +308,18 @@ input EmailConfigurationInput {
     description: String
     quantityMinimum: Int
     quantityMaximum: Int
+    options: [String]
+    # Include other addon fields
+  }
+  type WebAddon {
+    _id: ID!
+    title: String
+    description: String
+    quantityMinimum: Int
+    quantityMaximum: Int
     options: [Option]
     # Include other addon fields
   }
-
   input AddonInput {
     restaurant: String!
     addons: [AddonInputItem!]!
@@ -484,7 +492,7 @@ input EmailConfigurationInput {
     sections: [WebSection!]
     restaurants: [Restaurant!]
     options: [Option!]
-    addons: [Addon]
+    addons: [WebAddon]
   }
 
   input RestaurantProfileInput {
