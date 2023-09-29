@@ -878,7 +878,10 @@ const resolvers = {
 
       // If the distance is less than or equal to the maximum distance, include the restaurant in nearbyRestaurants
       if (distance <= maxDistance) {
-        nearbyRestaurants.push(restaurant);
+            // Exclude __typename from the restaurant data
+    const cleanedRestaurant = { ...restaurant._doc };
+    delete cleanedRestaurant.__typename;
+        nearbyRestaurants.push(cleanedRestaurant);
       }
     }
     // Fetch offers for all nearby restaurants in parallel
