@@ -107,7 +107,7 @@ input EmailConfigurationInput {
     orderPrefix: String
     image: String
     slug: String
-    location: Location
+    location: Locat
     deliveryBounds: Coordinates
     address: String
     userType: String!
@@ -143,7 +143,7 @@ input EmailConfigurationInput {
     orderPrefix: String
     image: String
     slug: String
-    location: Location
+    location: Locat
     deliveryBounds: Coordinates
     address: String
     userType: String!
@@ -580,7 +580,7 @@ input EmailConfigurationInput {
     username: String
     password: String
     orderPrefix: String
-    location: LocationInput
+    location: LocatInput
     isAvailable: Boolean
     minimumOrder: Float
     tax: Float
@@ -599,7 +599,7 @@ input EmailConfigurationInput {
     address: String
     username: String
     password: String
-    location: LocationInput
+    location: LocatInput
     isAvailable: Boolean
     minimumOrder: Float
     tax: Float
@@ -673,7 +673,7 @@ input EmailConfigurationInput {
 
   type Location {
     _id: ID!
-    coordinates: [Float]!
+    coordinates: [[[Float]]]!
     type: String
     # Include other location fields
   }
@@ -684,7 +684,7 @@ input EmailConfigurationInput {
     # Include other location fields
   }
   input LocationInput {
-    coordinates: [Float]!
+    coordinates: [[[Float]]]!
     type: String
   }
   input LocatInput {

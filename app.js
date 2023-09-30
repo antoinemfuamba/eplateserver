@@ -1,4 +1,7 @@
 var express = require('express');
+const { createServer } = require('http');
+const { execute, subscribe } = require('graphql');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { ApolloServer, gql } = require('apollo-server-express');
 const db = require('./models/db'); // Import the db connection object
 const typeDefs = require('./schema');
@@ -62,8 +65,27 @@ server.start().then(() => {
     res.send('foobar');
   });
 
-  // Start the server
+  /*// Start the server
   app.listen(port, () => {
+    console.log('Server started at port:' + port);
+  });*/
+  // Start the server
+  const httpServer = createServer(app);
+
+  // Start WebSocket server for subscriptions
+  SubscriptionServer.create(
+    {
+      schema: server.schema,
+      execute,
+      subscribe,
+    },
+    {
+      server: httpServer,
+      path: server.graphqlPath,
+    }
+  );
+
+  httpServer.listen(port, () => {
     console.log('Server started at port:' + port);
   });
 }).catch((error) => {
