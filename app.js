@@ -15,7 +15,11 @@ const JwtConfig = require('./config/config.json').development;
 const jwt = require('jsonwebtoken');
 
 // Define an array of allowed origins
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:3001','https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png'];
+const allowedOrigins = [
+'http://localhost:3000','https://drive.google.com/file/d/1HUcpbIG78DdoMKHtlVefjAZrWRRwwuA8/view?usp=sharing',
+'http://localhost:3001',
+'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png'
+];
 
 // Enable CORS for all routes
 app.use(
