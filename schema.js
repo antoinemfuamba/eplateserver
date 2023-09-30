@@ -883,7 +883,7 @@ scalar minute
   }
 
   type DeliveryAddress {
-    location: Location
+    location: Locat
     deliveryAddress: String
     details: String
     label: String
