@@ -767,7 +767,7 @@ scalar minute
   }
   type Addresses {
     _id: ID!
-    location: [Location!]!
+    location: [Locat!]!
     deliveryAddress: String
 
   }
@@ -776,7 +776,7 @@ scalar minute
     label: String
     deliveryAddress: String
     details: String
-    location: Location
+    location: Locat
     selected: Boolean
     
   }
