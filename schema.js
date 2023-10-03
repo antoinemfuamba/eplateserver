@@ -1040,7 +1040,11 @@ input OrderFoodInput {
     deliveryTime: String!
     _id: ID!
   }
-
+  type ToggleResult {
+    _id: ID
+    isAvailable: Boolean
+  }
+  
   type Query {
     getUser(id: ID!): Owner
     getUsers: [User]!
@@ -1115,6 +1119,11 @@ input OrderFoodInput {
   }
 
   type Mutation {
+    acceptOrder(_id: String!, time: String): Order
+    cancelOrder(_id: String!, reason: String!): Order
+    orderPickedUp(_id: String!): Order
+    saveRestaurantToken(token: String, isEnabled: Boolean): Restaurant
+    restaurantLogin(username: String!, password: String!): AuthPayload
     savePaypalConfiguration(configurationInput:PaypalConfigurationInput!): Configuration!
     saveStripeConfiguration(configurationInput:StripeConfigurationInput!): Configuration!
     saveCurrencyConfiguration(configurationInput: CurrencyConfigurationInput!): Configuration!
@@ -1153,7 +1162,7 @@ input OrderFoodInput {
     ): Order!
     deleteZone(id: String!): Zone
     updatePaymentStatus(id: String!, status: String!): Payment
-    toggleAvailability(_id: String): Rider
+    toggleAvailability(id: String!): ToggleResult
     assignRider(id: String!, riderId: String!): Order
     updateOrderStatus(id: ID!, status: String!, reason: String): Order
     updateStatus(id: ID!, orderStatus: String!): Order
