@@ -2419,7 +2419,7 @@ const resolvers = {
     }
   },
   //DONE
-  toggleAvailability: async (_, { _id }) => {
+  /*toggleAvailability: async (_, { _id }) => {
     try {
       // Find the rider by the provided ID
       const rider = await Rider.findById(_id);
@@ -2437,7 +2437,42 @@ const resolvers = {
       console.error(error);
       throw new Error('Failed to toggle rider availability');
     }
+  },*/
+  toggleAvailability: async (_, { id }, context) => {
+    try {
+      if (!id) {
+        throw new Error('ID parameter is required');
+      }
+  
+      const { restaurantId, _id } = context;
+  
+      if (restaurantId) {
+        // Toggle restaurant availability
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (!restaurant) {
+          throw new Error('Restaurant not found');
+        }
+        restaurant.isAvailable = !restaurant.isAvailable;
+        await restaurant.save();
+        return restaurant;
+      } else if (_id) {
+        // Toggle rider availability
+        const rider = await Rider.findById(id);
+        if (!rider) {
+          throw new Error('Rider not found');
+        }
+        rider.available = !rider.available;
+        await rider.save();
+        return rider;
+      } else {
+        throw new Error('Invalid context');
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to toggle availability');
+    }
   },
+  
   //DONE
   assignRider: async (_, { id, riderId }) => {
     try {
@@ -3448,6 +3483,146 @@ console.log(user);
            /****************************************************************************************************************************
                                         RESTAURANT MUTATIONS - START
     *****************************************************************************************************************************/
+    restaurantLogin: async (_, { username, password }) => {
+          try {
+          
+            // Find the user with the provided email
+      const Restaurant = db.model('restaurants'); // Replace 'User' with the name of your Mongoose model
+      const user = await Restaurant.findOne({ username });
+          // Handle case when user does not exist or password is incorrect
+    // Handle case when user does not exist
+    if (!user) {
+      throw new ApolloError('User not found');
+    }
+
+    // Handle case when password is incorrect
+    if (!bcrypt.compareSync(password, user.password)) {
+      throw new ApolloError('Invalid password');
+    }
+          // Generate a new token
+          const token = jwt.sign({ restaurantId: user._id.toString() }, JwtConfig.JWT_SECRET, { expiresIn: '2h' });
+          // Update the user's token in the database
+          user.token = token;
+          // user.notificationToken = notificationToken; 
+          await user.save();
+
+          // Return the user and token
+          return {
+            restaurantId: user._id.toString(),
+            token,
+            
+          };
+          } catch (error) {
+            console.error(error);
+            throw new Error('Failed to login');
+          }
+    },
+    acceptOrder: async (_, { _id, time }) => {
+      try {
+        // Validate inputs and perform necessary checks
+
+        // Find the order by the provided ID
+        const order = await Order.findById(_id);
+
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        // Update the order status and preparation time
+        order.orderStatus = 'ACCEPTED';
+                // Calculate the preparation time in minutes from the current time
+        const currentTime = new Date();
+        const preparationTimeInMinutes = parseInt(time, 10); // Parse the time as an integer
+        if (!isNaN(preparationTimeInMinutes)) {
+          currentTime.setMinutes(currentTime.getMinutes() + preparationTimeInMinutes);
+          order.preparationTime = currentTime;
+        } else {
+          throw new Error('Invalid preparation time');
+        }
+
+        order.acceptedAt = new Date();
+        // Save the updated order
+        const updatedOrder = await order.save();
+
+        return updatedOrder;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to accept order');
+      }
+    },
+    cancelOrder: async (_, { _id, reason }) => {
+      try {
+        // Validate inputs and perform necessary checks
+
+        // Find the order by the provided ID
+        const order = await Order.findById(_id);
+
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        // Update the order status and reason
+        order.orderStatus = 'CANCELLED';
+        order.reason = reason;
+        order.cancelledAt = new Date();
+
+        // Save the updated order
+        const updatedOrder = await order.save();
+
+        return updatedOrder;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to cancel order');
+      }
+    },
+    orderPickedUp: async (_, { _id }) => {
+      try {
+        // Validate inputs and perform necessary checks
+
+        // Find the order by the provided ID
+        const order = await Order.findById(_id);
+
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        // Update the order status to "picked up"
+        order.orderStatus = 'PICKED';
+        order.pickedAt = new Date();
+        // Save the updated order
+        const updatedOrder = await order.save();
+
+        return updatedOrder;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to update order status');
+      }
+    },
+    saveRestaurantToken: async (_, { token, isEnabled }, context) => {
+      try {
+        const {restaurantId} = context;
+
+        // Find the restaurant by the provided ID
+        const restaurant = await Restaurant.findById(restaurantId);
+
+        if (!restaurant) {
+          throw new Error('Restaurant not found');
+        }
+
+        // Update the notification token and enableNotification status
+        restaurant.notificationToken = token;
+        restaurant.enableNotification = isEnabled;
+
+        // Save the updated restaurant
+        const updatedRestaurant = await restaurant.save();
+
+        return updatedRestaurant;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to save restaurant token');
+      }
+    },
+
            /****************************************************************************************************************************
                                         RESTAURANT MUTATIONS - END
     *****************************************************************************************************************************/
