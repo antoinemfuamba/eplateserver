@@ -90,28 +90,27 @@ server.start().then(() => {
       path: server.graphqlPath,
     }
   );*/
-
-  const subscriptionServer = SubscriptionServer.create(
-    {
-      schema: server.typeDefs,
-      execute,
-      subscribe,
-    },
-    {
-      server: httpServer,
-      path: server.graphqlPath,
-    }
-  );
-
   // WebSocket server for subscriptions
-  const wsServer = new ws.Server({
-    server: httpServer,
-    path: server.graphqlPath,
-  });
+ // const wsServer = new ws.Server({
+   // server: httpServer,
+  //  path: server.graphqlPath,
+ // });
 
-  wsServer.on('connection', (socket, request) => {
-    subscriptionServer.onWebSocketConnect({ socket, request });
-  });
+ // wsServer.on('connection', (socket, request) => {
+
+    new SubscriptionServer(
+      {
+        schema: server.typeDefs,
+        execute,
+        subscribe,
+      },
+      {
+        server: httpServer,
+        path: server.graphqlPath,
+      }
+    );
+  //});
+
   httpServer.listen(port, () => {
     console.log('Server started at port:' + port);
   });
