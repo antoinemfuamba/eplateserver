@@ -100,7 +100,7 @@ server.start().then(() => {
 
     new SubscriptionServer(
       {
-        schema: server.typeDefs,
+        schema: server.schema,
         execute,
         subscribe,
       },
