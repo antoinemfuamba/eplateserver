@@ -1110,7 +1110,7 @@ input OrderFoodInput {
     zones: [Zone!]!
     taxes: [Tax!]!
     tips: Tip
-    rider(id: String!): Rider
+    rider(id: String): Rider
     getSection(id: ID!): Section
     getSections: [Section]
     sections: [Section!]!
