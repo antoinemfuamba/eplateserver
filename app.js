@@ -93,7 +93,7 @@ server.start().then(() => {
 
   const subscriptionServer = SubscriptionServer.create(
     {
-      schema: server.schema,
+      schema: server.typeDefs,
       execute,
       subscribe,
     },
