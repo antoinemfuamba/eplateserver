@@ -500,6 +500,7 @@ input EmailConfigurationInput {
     expectedTime: String
     isPickedUp: Boolean
     isRiderRinged: Boolean
+    isRinged: Boolean
     preparationTime: String
   }
 

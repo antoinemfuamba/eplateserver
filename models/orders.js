@@ -26,6 +26,12 @@ const orderSchema = new mongoose.Schema({
   isActive: {
     type: Boolean,
   },
+  isRinged: {
+    type: Boolean,
+  },
+  isRiderRinged: {
+    type: Boolean,
+  },
   isPickedUp: {
     type: Boolean,
     default: false,
