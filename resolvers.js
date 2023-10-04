@@ -1148,7 +1148,7 @@ const resolvers = {
         throw new Error('Failed to fetch restaurant orders');
       }
     },
-    
+
       /****************************************************************************************************************************
                                         RESTAURANT QUERIES - END
     *****************************************************************************************************************************/
@@ -2428,26 +2428,40 @@ const resolvers = {
     }
   },
   //DONE
-  /*toggleAvailability: async (_, { _id }) => {
+  toggleAvailability: async (_, { _id },context) => {
     try {
-      // Find the rider by the provided ID
-      const rider = await Rider.findById(_id);
-      if (!rider) {
-        throw new Error('Rider not found');
+            if (!_id) {
+        throw new Error('ID parameter is required');
       }
-
-      // Toggle the rider's availability
-      rider.available = !rider.available;
-      await rider.save();
-
-      // Return the updated rider
-      return rider;
+  
+      const { restaurantId} = context;
+      if (restaurantId) {
+        // Toggle restaurant availability
+        const restaurant = await Restaurant.findById(restaurantId);
+        if (!restaurant) {
+          throw new Error('Restaurant not found');
+        }
+        restaurant.isAvailable = !restaurant.isAvailable;
+        await restaurant.save();
+        return restaurant;
+      } else if (_id) {
+        // Toggle rider availability
+        const rider = await Rider.findById(id);
+        if (!rider) {
+          throw new Error('Rider not found');
+        }
+        rider.available = !rider.available;
+        await rider.save();
+        return rider;
+      } else {
+        throw new Error('Invalid context');
+      }
     } catch (error) {
       console.error(error);
       throw new Error('Failed to toggle rider availability');
     }
-  },*/
-  toggleAvailability: async (_, { id }, context) => {
+  },
+  /*toggleAvailability: async (_, { id }, context) => {
     try {
       if (!id) {
         throw new Error('ID parameter is required');
@@ -2481,7 +2495,7 @@ const resolvers = {
       throw new Error('Failed to toggle availability');
     }
   },
-  
+  */
   //DONE
   assignRider: async (_, { id, riderId }) => {
     try {
