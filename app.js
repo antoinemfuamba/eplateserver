@@ -8,6 +8,8 @@ const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 const subscriptions = require('./subscriptions');
 const cors = require('cors');
+const ws = require('ws');
+const http = require('http');
 var app = express();
 const port = process.env.PORT || 4000;
 require('dotenv').config();
@@ -35,7 +37,6 @@ app.use(
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  subscriptions,
   uri: '/graphql',
   context: ({ req }) => {
     // Get the authorization header from the request
@@ -68,11 +69,12 @@ server.start().then(() => {
   app.get('/', (req, res) => {
     res.send('foobar');
   });
+  const httpServer = createServer(app);
 
   /*// Start the server
   app.listen(port, () => {
     console.log('Server started at port:' + port);
-  });*/
+  });
   // Start the server
   const httpServer = createServer(app);
 
@@ -87,8 +89,29 @@ server.start().then(() => {
       server: httpServer,
       path: server.graphqlPath,
     }
+  );*/
+
+  const subscriptionServer = SubscriptionServer.create(
+    {
+      schema: server.schema,
+      execute,
+      subscribe,
+    },
+    {
+      server: httpServer,
+      path: server.graphqlPath,
+    }
   );
 
+  // WebSocket server for subscriptions
+  const wsServer = new ws.Server({
+    server: httpServer,
+    path: server.graphqlPath,
+  });
+
+  wsServer.on('connection', (socket, request) => {
+    subscriptionServer.onWebSocketConnect({ socket, request });
+  });
   httpServer.listen(port, () => {
     console.log('Server started at port:' + port);
   });
