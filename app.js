@@ -91,12 +91,12 @@ server.start().then(() => {
     }
   );*/
   // WebSocket server for subscriptions
- // const wsServer = new ws.Server({
-   // server: httpServer,
-  //  path: server.graphqlPath,
- // });
+   const wsServer = new ws.Server({
+   server: httpServer,
+   path: '/graphql'
+  });
 
- // wsServer.on('connection', (socket, request) => {
+  wsServer.on('connection', (socket, request) => {
 
     new SubscriptionServer(
       {
@@ -105,11 +105,11 @@ server.start().then(() => {
         subscribe,
       },
       {
-        server: httpServer,
-        path: server.graphqlPath,
+        server: socket,
+        
       }
     );
-  //});
+  });
 
   httpServer.listen(port, () => {
     console.log('Server started at port:' + port);
