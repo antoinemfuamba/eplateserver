@@ -470,7 +470,7 @@ input EmailConfigurationInput {
     _id: ID!
     orderId: String
     deliveryAddress: DeliveryAddress
-    items: [OrderItem]
+    items: [Item]
     user: User
     addons: [Addon]
     rider: Rider
@@ -852,7 +852,7 @@ scalar minute
     quantity: Int
     variation: Variation
     food: String
-    addons: [WebAddon]
+    addons: [Addon]
     specialInstructions: String
     reviewData: ReviewData
     isActive: Boolean
