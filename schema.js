@@ -1116,7 +1116,7 @@ input OrderFoodInput {
     riderOrders: [Order]
     riderEarnings(riderEarningsId: String, offset: Int): [Earning]
     riderWithdrawRequests(riderWithdrawRequestsId: String, offset: Int): [WithdrawRequest]
-    
+    restaurantOrders: [Order!]!
   }
 
   type Mutation {
