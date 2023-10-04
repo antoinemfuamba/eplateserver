@@ -2434,10 +2434,10 @@ const resolvers = {
         throw new Error('ID parameter is required');
       }
   
-      const { restaurantId} = context;
-      if (restaurantId) {
+      const { userId} = context;
+      if (userId) {
         // Toggle restaurant availability
-        const restaurant = await Restaurant.findById(restaurantId);
+        const restaurant = await Restaurant.findById(userId);
         if (!restaurant) {
           throw new Error('Restaurant not found');
         }
@@ -2446,7 +2446,7 @@ const resolvers = {
         return restaurant;
       } else if (_id) {
         // Toggle rider availability
-        const rider = await Rider.findById(id);
+        const rider = await Rider.findById(_id);
         if (!rider) {
           throw new Error('Rider not found');
         }
