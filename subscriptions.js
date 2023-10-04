@@ -106,6 +106,18 @@ const subscriptionResolvers = {
           }
         ),
       },
+      subscribeOrderStatus: {
+        subscribe: withFilter(
+          (_, { _id }, { pubsub }) => {
+            const channel = `ORDER_STATUS_${_id}`;
+            return pubsub.asyncIterator(channel);
+          },
+          (payload, variables) => {
+            return payload.subscribeOrderStatus._id === variables._id;
+          }
+        ),
+      },
+  
   },
 };
 

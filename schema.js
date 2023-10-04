@@ -656,6 +656,7 @@ input EmailConfigurationInput {
     phone: String!
     available: Boolean!
     zone: Zone!
+    accountNumber: String
     currentWalletAmount: Float
     totalWalletAmount: Float
     withdrawnWalletAmount: Float
@@ -989,7 +990,12 @@ input OrderFoodInput {
     origin: String
     order: Order
   }
-
+  type OrderStatusUpdate {
+    _id: ID!
+    orderId: String!
+    orderStatus: String!
+    rider: Rider!
+  }
   type Subscription {
     subscriptionOrder(id: String!): OrderSubscriptionPayload
     orderStatusChanged(userId: String!): OrderStatusChangedSubscriptionPayload
@@ -998,6 +1004,7 @@ input OrderFoodInput {
     subscriptionAssignRider(riderId: String!): AssignRiderPayload!
     subscriptionRiderLocation(riderId: String!): Rider!
     subscriptionNewMessage(order: ID!): Message!
+    subscribeOrderStatus(_id: String!): OrderStatusUpdate!
 
   }
   type Message {

@@ -2434,7 +2434,7 @@ const resolvers = {
         throw new Error('ID parameter is required');
       }
   
-      const { userId} = context;
+      const { userId} = context.userId;
       if (userId) {
         // Toggle restaurant availability
         const restaurant = await Restaurant.findById(userId);
