@@ -32,7 +32,7 @@ const Addresses = require('./models/addresses');
 const parseTimeString = require('./config/helpers');
 const Item = require('./models/items');
 const { withFilter } = require('graphql-subscriptions');
-const { PubSub } = require('apollo-server-express'); // Import PubSub
+const { PubSub } = require('graphql-subscriptions'); // Import PubSub
 // Create an instance of PubSub
 const pubsub = new PubSub();
 const { ObjectId } = require('mongodb');
