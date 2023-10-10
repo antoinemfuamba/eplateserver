@@ -4,6 +4,8 @@ const { execute, subscribe } = require('graphql');
 const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { ApolloServer, gql } = require('apollo-server-express');
 const db = require('./models/db'); // Import the db connection object
+const { PubSub } = require('graphql-subscriptions');
+const pubsub = new PubSub();
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
 const subscriptions = require('./subscriptions');
@@ -38,6 +40,16 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   uri: '/graphql',
+  subscriptions: {
+    onConnect: async (connectionParams, webSocket) => {
+            // Implement any logic for handling WebSocket connections here
+      // This function is called when a WebSocket connection is established
+
+
+      // If authentication fails or no authentication is required, you can return an empty object
+      return {pubsub};
+    },
+  },
   context: ({ req }) => {
     // Get the authorization header from the request
     const authHeader = req.headers.authorization;
@@ -52,7 +64,7 @@ const server = new ApolloServer({
         const userId = decodedToken.userId;
 
         // Add the userId to the context object
-        return { userId };
+        return { userId, pubsub };
       } catch (error) {
         // Token verification failed, handle accordingly (e.g., throw an error)
         throw new Error('Invalid token');

@@ -31,6 +31,10 @@ const Rider = require('./models/rider');
 const Addresses = require('./models/addresses');
 const parseTimeString = require('./config/helpers');
 const Item = require('./models/items');
+const { withFilter } = require('graphql-subscriptions');
+const { PubSub } = require('apollo-server-express'); // Import PubSub
+// Create an instance of PubSub
+const pubsub = new PubSub();
 const { ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const { convertUtcToJohannesburg,getDistanceFromLatLonInMeters, generateUniqueCode} = require('./config/distance');
@@ -767,7 +771,7 @@ const resolvers = {
         throw new Error('Failed to fetch order');
       }
     },
-    rider: async (_, { id }) => {
+    rider: async (_, { id },{ pubsub }) => {
       try {
         // Fetch the rider by ID (you should replace this with your own logic)
         const rider = await Rider.findById(id);
@@ -775,6 +779,9 @@ const resolvers = {
         if (!rider) {
           throw new Error('Rider not found');
         }
+
+        // After fetching the rider, activate the subscription for this rider's location
+        pubsub.publish(`RIDER_LOCATION_${rider._id}`, { subscriptionRiderLocation: rider });
 
         return rider;
       } catch (error) {
@@ -3066,7 +3073,10 @@ if (!existingRestaurant) {
     });
 
     const savedOrder = await newOrder.save();
-
+        // Publish a message to activate the subscription
+        pubsub.publish(`ORDER_${savedOrder._id}`, {
+          subscriptionOrder: savedOrder, // Pass the order object
+        });
     return savedOrder;
       } catch (error) {
         console.error(error);
