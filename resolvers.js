@@ -542,9 +542,10 @@ const resolvers = {
 
       // Set the zone field for the order
       order.zone = zone;
+      console.log('The zone:', order.zone);
     }
           console.log('After fetching active orders');
-
+          
         return activeOrders;
       } catch (error) {
         console.error('Error: Failed to fetch active orders', error);
@@ -2956,7 +2957,6 @@ if (!existingRestaurant) {
       tipping,
       taxationAmount,
       address,
-      orderDate,
       isPickedUp,
       deliveryCharges,
     } = args;
@@ -3014,6 +3014,24 @@ if (!existingRestaurant) {
     // Convert orderTotal to a number
     const orderAmount = parseFloat(orderTotal);
 
+    if (isNaN(latitude) || isNaN(longitude) || !restaurant) {
+      throw new Error('Invalid restaurant or location coordinates');
+    }
+    // Find the corresponding zone for the restaurant's location
+    const zone = await Zone.findOne({
+      'location.coordinates': {
+        $geoIntersects: {
+          $geometry: {
+            type: 'Point',
+            coordinates: [longitude, latitude],
+          },
+        },
+      },
+    });
+
+    if (!zone) {
+      throw new Error('No zone found for the restaurant location');
+    }
         // Populate the `deliveryAddress` field
     const deliveryAddress = {
       location: {
@@ -3021,6 +3039,8 @@ if (!existingRestaurant) {
         coordinates: [longitude, latitude], // Make sure these are valid coordinates
       },
       deliveryAddress: address.deliveryAddress, // Assuming you have a 'deliveryAddress' property in the input
+      details: address.details,
+      label: address.label
     };
 
       // Populate the `items` field
@@ -3123,6 +3143,7 @@ if (!existingRestaurant) {
       orderAmount: orderAmount,
       paymentStatus,
       createdAt: new Date(),
+      zone: zone._id,
     });
 
     const savedOrder = await newOrder.save();
