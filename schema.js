@@ -491,7 +491,7 @@ input EmailConfigurationInput {
     deliveredAt: String
     acceptedAt: String
     restaurant: Restaurant
-    zone:Zone
+    zone: Zone
     paymentStatus: String
     paymentMethod: String
     orderAmount: Float
@@ -1173,8 +1173,8 @@ input OrderFoodInput {
     updatePaymentStatus(id: String!, status: String!): Payment
     toggleAvailability(_id: String): ToggleResult
     assignRider(id: String!, riderId: String!): Order
-    updateOrderStatus(id: ID!, status: String!, reason: String): Order
-    updateStatus(id: ID!, orderStatus: String!): Order
+    updateOrderStatus(id: String!, status: String!, reason: String): Order
+    updateStatus(id: String!, orderStatus: String!): Order
     uploadToken(id: ID!, pushToken: String!): User
     resetPassword(password: String!, token: String!): ResetPasswordResult
     createRider(riderInput: RiderInput!): Rider!

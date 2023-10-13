@@ -63,9 +63,11 @@ const resolvers = {
         throw new Error('Unable to fetch configuration.');
       }
     },
-    ridersByZone: async (_, { _id }) => {
+    ridersByZone: async (_, { id }) => {
       try {
-        const riders = await Rider.find({ zone: _id });
+        // Find riders in the specified zone by their zone ID
+        const riders = await Rider.find({ 'zone._id': id });
+
         return riders;
       } catch (error) {
         console.error(error);
@@ -2519,21 +2521,40 @@ const resolvers = {
   //DONE
   assignRider: async (_, { id, riderId }) => {
     try {
-      // Find the order by the provided ID
-      const order = await Order.findById(id);
-      if (!order) {
-        throw new Error('Order not found');
-      }
+    // Find the order by the provided ID
+    const order = await Order.findById(id);
+    if (!order) {
+      throw new Error('Order not found');
+    }
 
-      // Find the rider by the provided rider ID
-      const rider = await Rider.findById(riderId);
-      if (!rider) {
-        throw new Error('Rider not found');
-      }
+    // Find the rider by the provided rider ID
+    const rider = await Rider.findById(riderId);
+    if (!rider) {
+      throw new Error('Rider not found');
+    }
 
-      // Assign the rider to the order
-      order.rider = rider;
-      await order.save();
+    // Check if the rider is available (you can add this check)
+    if (!rider.available) {
+      throw new Error('Rider is not available');
+    }
+
+      // Use geospatial query to check if the restaurant's location exists within the rider's zone
+      const isLocationWithinZone = await Zone.findOne({
+        _id: rider.zone._id,
+        location: {
+          $geoIntersects: {
+            $geometry: order.restaurant.location
+          }
+        }
+      });
+  
+      if (!isLocationWithinZone) {
+        throw new Error('Restaurant is not within the rider\'s zone');
+      }
+  
+    // Assign the rider to the order
+    order.rider = rider;
+    await order.save();
 
       // Return the updated order
       return order;
