@@ -524,6 +524,25 @@ const resolvers = {
             path: 'items.food', // Populate the 'foods' field
             
           });
+           for (const order of activeOrders) {
+      // Get the restaurant's location coordinates
+      const restaurantLocation = order.restaurant.location.coordinates;
+
+      // Find the zone based on restaurant coordinates
+      const zone = await Zone.findOne({
+        "location.coordinates": {
+          $geoIntersects: {
+            $geometry: {
+              type: 'Point',
+              coordinates: restaurantLocation,
+            },
+          },
+        },
+      });
+
+      // Set the zone field for the order
+      order.zone = zone;
+    }
           console.log('After fetching active orders');
 
         return activeOrders;
