@@ -37,7 +37,7 @@ const { PubSub } = require('graphql-subscriptions'); // Import PubSub
 const pubsub = new PubSub();
 const { ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
-const { convertUtcToJohannesburg,getDistanceFromLatLonInMeters, generateUniqueCode} = require('./config/distance');
+const { convertUtcToJohannesburg,getDistanceFromLatLonInMeters, generateUniqueCode, isLocationWithinZone} = require('./config/distance');
 const db  = require('./models/db'); // Replace with your database connection code
 const jwt = require('jsonwebtoken');
 const { ApolloError } = require('apollo-server-express');
@@ -1032,7 +1032,15 @@ const resolvers = {
         //DONE
         riderOrders: async (_, {id}) => {
             try { 
-            
+            // Extract the userId from the context
+            const { userId } = context;
+
+            // Find the rider by userId
+            const rider = await Rider.findOne({ userId }).populate('zone');
+
+            if (!rider) {
+              throw new Error('Rider not found');
+            } 
           const orders = await Order.findById(id).populate([
             {
               path: 'restaurant',
@@ -1059,8 +1067,13 @@ const resolvers = {
             'user',
             'rider',
           ]);
-
-          return orders;
+        // Filter orders to include only those belonging to the rider's zone
+        const riderOrders = orders.filter((order) => {
+          const restaurantLocation = order.restaurant.location;
+          const isWithinZone = isLocationWithinZone(restaurantLocation, rider.zone);
+          return isWithinZone;
+        });
+          return riderOrders;
         } catch (error) {
           console.error(error);
           throw new Error('Failed to fetch rider orders');
@@ -2435,9 +2448,9 @@ const resolvers = {
     }
   },
   //DONE
-  toggleAvailability: async (_, { _id },context) => {
+  toggleAvailability: async (_, { id },context) => {
     try {
-            if (!_id) {
+            if (!id) {
         throw new Error('ID parameter is required');
       }
   
@@ -2451,9 +2464,9 @@ const resolvers = {
         restaurant.isAvailable = !restaurant.isAvailable;
         await restaurant.save();
         return restaurant;
-      } else if (_id) {
+      } else if (id) {
         // Toggle rider availability
-        const rider = await Rider.findById(_id);
+        const rider = await Rider.findById(id);
         if (!rider) {
           throw new Error('Rider not found');
         }

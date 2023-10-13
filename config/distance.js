@@ -24,7 +24,36 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const earthRadiusKm = 6371; // Radius of the Earth in kilometers
 
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+
+  lat1 = deg2rad(lat1);
+  lat2 = deg2rad(lat2);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+}
+
+function isLocationWithinZone(location, zone) {
+  const zoneRadiusKm = zone.radius; // The radius of the zone in kilometers
+
+  // Calculate the distance between the location and the center of the zone
+  const distance = calculateDistance(
+    location.coordinates[1], // Latitude of the location
+    location.coordinates[0], // Longitude of the location
+    zone.center.coordinates[1], // Latitude of the zone center
+    zone.center.coordinates[0] // Longitude of the zone center
+  );
+
+  return distance <= zoneRadiusKm;
+}
 function generateUniqueCode(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let code = '';
@@ -97,4 +126,5 @@ const updateRiderLocation = async (riderId, latitude, longitude, pubsub) => {
     getRestaurantName,
     fetchRiderLocation, // Include the fetchRiderLocation function
     updateRiderLocation, // Include the updateRiderLocation function
+    isLocationWithinZone
   };  
