@@ -1033,14 +1033,14 @@ const resolvers = {
         riderOrders: async (_, {id}) => {
             try { 
             // Extract the userId from the context
-            const { userId } = context;
+           /* const { userId } = context;
 
             // Find the rider by userId
             const rider = await Rider.findOne({ userId }).populate('zone');
 
             if (!rider) {
               throw new Error('Rider not found');
-            } 
+            } */
           const orders = await Order.findById(id).populate([
             {
               path: 'restaurant',
@@ -1067,13 +1067,13 @@ const resolvers = {
             'user',
             'rider',
           ]);
-        // Filter orders to include only those belonging to the rider's zone
+        /* Filter orders to include only those belonging to the rider's zone
         const riderOrders = orders.filter((order) => {
           const restaurantLocation = order.restaurant.location;
           const isWithinZone = isLocationWithinZone(restaurantLocation, rider.zone);
           return isWithinZone;
-        });
-          return riderOrders;
+        });*/
+          return orders;
         } catch (error) {
           console.error(error);
           throw new Error('Failed to fetch rider orders');
@@ -3439,7 +3439,7 @@ console.log(user);
   
           // Assign the order to the rider
           order.rider = rider._id;
-          order.orderStatus = 'Assigned';
+          order.orderStatus = 'ASSIGNED';
         
           // Save the updated order
           const updatedOrder = await order.save();
