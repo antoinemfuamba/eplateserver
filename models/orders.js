@@ -9,7 +9,7 @@ const orderSchema = new mongoose.Schema({
     type: Number,
   },
   status:{
-    type: Boolean,
+    type: String,
   },
   paidAmount:{
     type: Number,

@@ -483,7 +483,7 @@ input EmailConfigurationInput {
     tipping: Float
     taxationAmount: Float
     createdAt: String
-    status: Boolean
+    status: String
     completionTime: String
     cancelledAt: String
     assignedAt: String
@@ -1019,6 +1019,7 @@ input OrderFoodInput {
     orderStatus: String
     rider: Rider
     completionTime: String
+    subscriptionOrder: Order
   }
   
   type OrderStatusChangedSubscriptionPayload {

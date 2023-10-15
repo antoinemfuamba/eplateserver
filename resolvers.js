@@ -2446,7 +2446,7 @@ const resolvers = {
       }
 
       // Update the order's status
-      order.status = orderStatus;
+      order.orderStatus = orderStatus;
       await order.save();
 
       // Return the updated order
@@ -3183,7 +3183,7 @@ if (!existingRestaurant) {
       orderAmount: orderAmount,
       paymentStatus,
       createdAt: new Date(),
-      zone: zone._id,
+  
     });
 
     const savedOrder = await newOrder.save();
@@ -3191,9 +3191,7 @@ if (!existingRestaurant) {
         pubsub.publish(`ORDER_${savedOrder._id}`, {
           subscriptionOrder: savedOrder, // Pass the order object
         });
-        pubsub.publish(`subscribePlaceOrder_${restaurant}`, {
-          subscriptionPlaceOrder: restaurant, // Pass the order object
-        });
+
     return savedOrder;
       } catch (error) {
         console.error(error);
