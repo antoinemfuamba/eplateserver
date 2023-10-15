@@ -1,4 +1,8 @@
 const moment = require("moment-timezone");
+const Zone = require('../models/zone');
+const Location = require('../models/locations');
+const Restaurant = require('../models/restaurants');
+const turf = require('@turf/turf');
 
 function convertUtcToJohannesburg(utcTime) {
     const utcMoment = moment.utc(utcTime);
@@ -118,6 +122,59 @@ const updateRiderLocation = async (riderId, latitude, longitude, pubsub) => {
     // Handle errors and return appropriate values
   }
 };
+// When a new restaurant is created or coordinates are updated
+// This function is triggered
+
+async function assignZoneToRestaurant(restaurantId, coordinates) {
+  try {
+    // Query the Zone collection to find the corresponding zone
+    const zones = await Zone.find();
+
+    for (const zone of zones) {
+      if (zone.location) {
+        // Fetch the `location` document using the reference
+        const location = await Location.findById(zone.location);
+        if (!location) {
+          console.log('Location document not found for the zone:', zone.title);
+          continue;
+        }
+      // Extract the coordinates from the nested arrays within the location field
+      const polygonCoordinates = location.coordinates[0].map((point) => point.reverse()); // Reverse coordinates
+
+              // Reverse the coordinates
+      coordinates = [coordinates[1], coordinates[0]];
+
+      // Check if the restaurant's coordinates are within the zone's polygon
+      const isInsideZone = isPointInsidePolygon(coordinates, polygonCoordinates);
+      if (isInsideZone) {
+        // Update the restaurant's zone field
+        await Restaurant.findByIdAndUpdate(restaurantId, { zone: zone._id });
+
+        console.log('Zone assigned to the restaurant successfully.');
+        return;
+      }
+    }
+  }
+    console.log('No matching zone found for the restaurant.');
+  } catch (error) {
+    console.error('Error assigning zone to restaurant:', error);
+  }
+}
+function isPointInsidePolygon(point, polygon) {
+  const x = point[0];
+  const y = point[1];
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const xi = polygon[i][0];
+    const yi = polygon[i][1];
+    const xj = polygon[j][0];
+    const yj = polygon[j][1];
+    const intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
 
   module.exports = {
     convertUtcToJohannesburg,
@@ -126,5 +183,6 @@ const updateRiderLocation = async (riderId, latitude, longitude, pubsub) => {
     getRestaurantName,
     fetchRiderLocation, // Include the fetchRiderLocation function
     updateRiderLocation, // Include the updateRiderLocation function
-    isLocationWithinZone
+    isLocationWithinZone,
+    assignZoneToRestaurant
   };  

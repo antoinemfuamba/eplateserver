@@ -37,7 +37,7 @@ const { PubSub } = require('graphql-subscriptions'); // Import PubSub
 const pubsub = new PubSub();
 const { ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
-const { convertUtcToJohannesburg,getDistanceFromLatLonInMeters, generateUniqueCode, isLocationWithinZone} = require('./config/distance');
+const {assignZoneToRestaurant,getDistanceFromLatLonInMeters, generateUniqueCode, isLocationWithinZone} = require('./config/distance');
 const db  = require('./models/db'); // Replace with your database connection code
 const jwt = require('jsonwebtoken');
 const { ApolloError } = require('apollo-server-express');
@@ -511,7 +511,6 @@ const resolvers = {
     getActiveOrders: async (_, { restaurantId }) => {
       try {
         // Fetch active orders based on restaurantId
-        console.log('Before fetching active orders');
 
         const activeOrders = await Order.find({ restaurant: restaurantId})
           .populate({
@@ -523,28 +522,16 @@ const resolvers = {
           .populate({
             path: 'items.food', // Populate the 'foods' field
             
-          });
+          })
+          .populate('zone'); // Add this line to populate the 'zone' field
+          
            for (const order of activeOrders) {
-      // Get the restaurant's location coordinates
-      const restaurantLocation = order.restaurant.location.coordinates;
-
-      // Find the zone based on restaurant coordinates
-      const zone = await Zone.findOne({
-        "location.coordinates": {
-          $geoIntersects: {
-            $geometry: {
-              type: 'Point',
-              coordinates: restaurantLocation,
-            },
-          },
-        },
-      });
+      // Get the updated restaurant object to access the zone field
+      const updatedRestaurant = await Restaurant.findById(restaurantId);
 
       // Set the zone field for the order
-      order.zone = zone;
-      console.log('The zone:', order.zone);
+      order.zone = updatedRestaurant.zone;
     }
-          console.log('After fetching active orders');
           
         return activeOrders;
       } catch (error) {
@@ -2558,22 +2545,10 @@ const resolvers = {
       throw new Error('Rider is not available');
     }
 
-      // Use geospatial query to check if the restaurant's location exists within the rider's zone
-      const isLocationWithinZone = await Zone.findOne({
-        _id: rider.zone._id,
-        location: {
-          $geoIntersects: {
-            $geometry: order.restaurant.location
-          }
-        }
-      });
-  
-      if (!isLocationWithinZone) {
-        throw new Error('Restaurant is not within the rider\'s zone');
-      }
   
     // Assign the rider to the order
     order.rider = rider;
+    order.orderStatus = 'ASSIGNED'; // or the desired status
     await order.save();
 
       // Return the updated order
@@ -2603,8 +2578,8 @@ const resolvers = {
       throw new Error('Failed to update payment status');
     }
   },
-  //DONE
-  updateDeliveryBoundsAndLocation: async (_, { id, bounds, location }) => {
+  //DONE - The Old
+ /* updateDeliveryBoundsAndLocation: async (_, { id, bounds, location }) => {
     try {
 
     // Update the delivery bounds
@@ -2674,7 +2649,86 @@ if (!existingRestaurant) {
       console.error(error);
       throw new Error('Failed to update delivery bounds and location');
     }
-  },  //DONE
+  },*/  //DONE
+  updateDeliveryBoundsAndLocation: async (_, { id, bounds, location }) => {
+    try {
+      // Update the delivery bounds
+      const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+        id,
+        { 'deliveryBounds.coordinates': bounds },
+        { new: true }
+      );
+  
+      if (!updatedRestaurant) {
+        return {
+          success: false,
+          message: 'Restaurant not found.',
+          data: null,
+        };
+      }
+  
+      // Fetch an existing restaurant to get the zone value
+      const existingRestaurant = await Restaurant.findById(id);
+  
+      if (!existingRestaurant) {
+        return {
+          success: false,
+          message: 'Restaurant not found.',
+          data: null,
+        };
+      }
+  
+      // Fetch the existing location or create a new one
+      let existingLocation = null;
+  
+      if (updatedRestaurant.location) {
+        existingLocation = await Locat.findById(updatedRestaurant.location.toString());
+      }
+  
+      // Convert the location coordinates to a nested array of numbers
+      const coordinates = [location.longitude, location.latitude];
+  
+      // Declare the variable to hold the new or updated location
+      let updatedLocation;
+  
+      // If the location exists, update its coordinates
+      if (existingLocation) {
+        existingLocation.coordinates = coordinates;
+        updatedLocation = await existingLocation.save();
+      } else {
+        // Create a new location
+        const newLocation = new Locat({
+          type: 'Point',
+          coordinates: coordinates,
+        });
+        // Save the new location
+        updatedLocation = await newLocation.save();
+      }
+      
+    // Call the function to assign the zone based on coordinates
+    await assignZoneToRestaurant(updatedRestaurant._id, coordinates);
+
+  
+      // Update the restaurant's location and zone
+      updatedRestaurant.location = updatedLocation._id;
+      await updatedRestaurant.save();
+  
+      return {
+        success: true,
+        message: 'Delivery bounds, location, and zone updated successfully.',
+        data: {
+          _id: updatedRestaurant._id,
+          deliveryBounds: updatedRestaurant.deliveryBounds,
+          location: updatedLocation,
+          zone: updatedRestaurant.zone,
+        },
+      };
+    } catch (error) {
+      console.error(error);
+      throw new Error('Failed to update delivery bounds, location, and zone');
+    }
+  },
+  
   createOffer: async (_, { offer }) => {
     try {
       // Extract data from the offer input
@@ -3017,21 +3071,7 @@ if (!existingRestaurant) {
     if (isNaN(latitude) || isNaN(longitude) || !restaurant) {
       throw new Error('Invalid restaurant or location coordinates');
     }
-    // Find the corresponding zone for the restaurant's location
-    const zone = await Zone.findOne({
-      'location.coordinates': {
-        $geoIntersects: {
-          $geometry: {
-            type: 'Point',
-            coordinates: [longitude, latitude],
-          },
-        },
-      },
-    });
 
-    if (!zone) {
-      throw new Error('No zone found for the restaurant location');
-    }
         // Populate the `deliveryAddress` field
     const deliveryAddress = {
       location: {
@@ -3150,6 +3190,9 @@ if (!existingRestaurant) {
         // Publish a message to activate the subscription
         pubsub.publish(`ORDER_${savedOrder._id}`, {
           subscriptionOrder: savedOrder, // Pass the order object
+        });
+        pubsub.publish(`subscribePlaceOrder_${restaurant}`, {
+          subscriptionPlaceOrder: restaurant, // Pass the order object
         });
     return savedOrder;
       } catch (error) {
@@ -3869,26 +3912,25 @@ console.log(user);
     },
     zone: async (order) => {
       try {
-        const locationCoordinates = order.deliveryAddress.location.coordinates;
-        console.log('Location Coordinates:', locationCoordinates);
+ // Get the restaurant's ID from the order
+ const restaurantId = order.restaurant;
 
-        // Find the zone that contains the locationCoordinates
-        const zone = await Zone.findOne({
-          "location.coordinates": {
-            $geoIntersects: {
-              $geometry: {
-                type: 'Point',
-                coordinates: locationCoordinates,
-              },
-            },
-          },
-        });
-        return zone;
-      } catch (error) {
-        console.error('Failed to fetch zone:', error);
-        throw new Error('Failed to fetch zone');
-      }
-    },
+ // Fetch the restaurant to access its zone
+ const restaurant = await Restaurant.findById(restaurantId);
+
+ if (restaurant && restaurant.zone) {
+   // If the restaurant has a valid zone, return it
+   const zone = await Zone.findById(restaurant.zone);
+   return zone;
+  } else {
+    // Handle cases where the restaurant or zone is not found
+    return null;
+  }
+} catch (error) {
+  console.error('Failed to fetch zone:', error);
+  throw new Error('Failed to fetch zone');
+}
+},
   },
   WebOrder: {
     user: async (weborder) => {

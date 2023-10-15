@@ -10,6 +10,7 @@
     "@expo/webpack-config": "^18.0.1",
     "@sentry/react": "^6.16.1",
     "@sentry/tracing": "^6.16.1",
+    "@turf/turf": "^6.5.0",
     "@types/react": "^17.0.24",
     "amplitude-js": "^8.14.1",
     "apollo-boost": "^0.4.9",
