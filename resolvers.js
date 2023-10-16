@@ -830,6 +830,7 @@ const resolvers = {
 
         return rider;
       } catch (error) {
+        console.error('Error fetching rider:', error.message);
         throw new Error(`Failed to fetch rider: ${error.message}`);
       }
     },
@@ -1075,55 +1076,43 @@ const resolvers = {
         }
         },*/
         //DONE
-        riderOrders: async (_, {id}) => {
-            try { 
-            // Extract the userId from the context
-           /* const { userId } = context;
-
-            // Find the rider by userId
-            const rider = await Rider.findOne({ userId }).populate('zone');
-
-            if (!rider) {
-              throw new Error('Rider not found');
-            } */
-          const orders = await Order.findById(id).populate([
-            {
-              path: 'restaurant',
-              populate: {
-                path: 'location',
+        riderOrders: async (_, { id }) => {
+          try {
+            // Fetch orders by rider's ID
+            const orders = await Order.find({ rider: id }).populate([
+              {
+                path: 'restaurant',
+                populate: {
+                  path: 'location',
+                },
               },
-            },
-            {
-              path: 'deliveryAddress',
-              populate: {
-                path: 'location',
+              {
+                path: 'deliveryAddress',
+                populate: {
+                  path: 'location',
+                },
               },
-            },
-            'items',
-            {
-              path: 'items.variation',
-            },
-            {
-              path: 'items.addons',
-              populate: {
-                path: 'options',
+              'items',
+              {
+                path: 'items.variation',
               },
-            },
-            'user',
-            'rider',
-          ]);
-        /* Filter orders to include only those belonging to the rider's zone
-        const riderOrders = orders.filter((order) => {
-          const restaurantLocation = order.restaurant.location;
-          const isWithinZone = isLocationWithinZone(restaurantLocation, rider.zone);
-          return isWithinZone;
-        });*/
-          return orders;
-        } catch (error) {
-          console.error(error);
-          throw new Error('Failed to fetch rider orders');
-        }
+              {
+                path: 'items.addons',
+                populate: {
+                  path: 'options',
+                },
+              },
+              'user',
+              'rider',
+            ]);
+        
+            return orders;
+          } catch (error) {
+            console.error(error);
+            throw new Error('Failed to fetch rider orders');
+          }
         },
+        
         riderEarnings: async (_, { riderEarningsId, offset }) => {
         try {
           // Logic to fetch rider earnings based on the provided riderEarningsId and offset
