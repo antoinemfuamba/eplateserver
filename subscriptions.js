@@ -12,7 +12,7 @@ const subscriptionResolvers = {
             }
   
             // Return the async iterator for the subscription
-            return context.pubsub.asyncIterator(`ORDER_${id}`);
+            return context.pubsub.asyncIterator(`ORDER_PLACED`);
           },
           (payload, variables) => {
             // Ensure the payload is sent only to subscribers who are interested in updates for the specified order (id)

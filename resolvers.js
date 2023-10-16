@@ -539,6 +539,7 @@ const resolvers = {
         throw new Error('Failed to fetch active orders');
       }
     },
+
     //DONE
     getAddon: async (_, { id }) => {
       // Retrieve and return the Addon with the provided ID
@@ -3188,9 +3189,10 @@ if (!existingRestaurant) {
 
     const savedOrder = await newOrder.save();
         // Publish a message to activate the subscription
-        pubsub.publish(`ORDER_${savedOrder._id}`, {
-          subscriptionOrder: savedOrder, // Pass the order object
-        });
+    // After saving the order, publish the orderId in the subscription payload
+    pubsub.publish('ORDER_PLACED', {
+      subscriptionOrder: savedOrder, // Include the order details
+    });
 
     return savedOrder;
       } catch (error) {
