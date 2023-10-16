@@ -63,10 +63,11 @@ const resolvers = {
         throw new Error('Unable to fetch configuration.');
       }
     },
+    //DONE
     ridersByZone: async (_, { id }) => {
       try {
         // Find riders in the specified zone by their zone ID
-        const riders = await Rider.find({ 'zone._id': id });
+        const riders = await Rider.find({ zone: id }).populate('zone');
 
         return riders;
       } catch (error) {
@@ -508,7 +509,7 @@ const resolvers = {
       }
     },
     //DONE
-    getActiveOrders: async (_, { restaurantId }) => {
+   /* getActiveOrders: async (_, { restaurantId }) => {
       try {
         // Fetch active orders based on restaurantId
 
@@ -538,8 +539,42 @@ const resolvers = {
         console.error('Error: Failed to fetch active orders', error);
         throw new Error('Failed to fetch active orders');
       }
+    },*/
+    getActiveOrders: async (_, { restaurantId }) => {
+      try {
+        // Define the query conditions based on the presence of restaurantId
+        const queryConditions = restaurantId
+          ? { restaurant: restaurantId }
+          : {}; // If restaurantId is not provided, an empty query condition fetches all active orders.
+    
+        // Fetch active orders based on the query conditions
+        const activeOrders = await Order.find(queryConditions)
+          .populate({
+            path: 'restaurant',
+            populate: {
+              path: 'location', // Replace with the actual path to location if needed
+            },
+          })
+          .populate({
+            path: 'items.food', // Populate the 'foods' field
+          })
+          .populate('zone');
+    
+        // If restaurantId is provided, set the zone field for each order
+        if (restaurantId) {
+          for (const order of activeOrders) {
+            const updatedRestaurant = await Restaurant.findById(restaurantId);
+            order.zone = updatedRestaurant.zone;
+          }
+        }
+    
+        return activeOrders;
+      } catch (error) {
+        console.error('Error: Failed to fetch active orders', error);
+        throw new Error('Failed to fetch active orders');
+      }
     },
-
+    
     //DONE
     getAddon: async (_, { id }) => {
       // Retrieve and return the Addon with the provided ID
@@ -2527,10 +2562,10 @@ const resolvers = {
   },
   */
   //DONE
-  assignRider: async (_, { id, riderId }) => {
+  assignRider: async (_, { _id, riderId }) => {
     try {
     // Find the order by the provided ID
-    const order = await Order.findById(id);
+    const order = await Order.findById(_id);
     if (!order) {
       throw new Error('Order not found');
     }

@@ -1173,7 +1173,7 @@ input OrderFoodInput {
     deleteZone(id: String!): Zone
     updatePaymentStatus(id: String!, status: String!): Payment
     toggleAvailability(_id: String): ToggleResult
-    assignRider(id: String!, riderId: String!): Order
+    assignRider(_id: String!, riderId: String!): Order
     updateOrderStatus(id: String!, status: String!, reason: String): Order
     updateStatus(id: String!, orderStatus: String!): Order
     uploadToken(id: ID!, pushToken: String!): User
