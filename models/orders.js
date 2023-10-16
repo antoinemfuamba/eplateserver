@@ -122,7 +122,7 @@ const orderSchema = new mongoose.Schema({
     },
     rider: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "riders",
+      ref: "rider",
     },
     zone: {
       type: mongoose.Schema.Types.ObjectId,

@@ -1,7 +1,6 @@
 // Import your models
 const Owner = require('./models/Owner');
 const User = require('./models/users');
-const Order = require('./models/orders');
 const Food = require('./models/foods');
 const Vendor = require('./models/vendors');
 const Promotion = require('./models/promotions');
@@ -28,6 +27,7 @@ const Section = require('./models/sections');
 const Offer = require('./models/offers');
 const Payment = require('./models/payment');
 const Rider = require('./models/rider');
+const Order = require('./models/orders');
 const Addresses = require('./models/addresses');
 const parseTimeString = require('./config/helpers');
 const Item = require('./models/items');
