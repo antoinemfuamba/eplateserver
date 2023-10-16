@@ -1077,29 +1077,59 @@ const resolvers = {
         },*/
         //DONE
         riderOrders: async (_, args, context) => {
-            try { 
+          try {
             // Extract the userId from the context
             const { userId } = context;
-
+        
             // Find the rider by userId
             const rider = await Rider.findOne({ userId }).populate('zone');
-
+        
             if (!rider) {
               throw new Error('Rider not found');
-            } 
-          const orders = await Order.find({ rider: userId });
-        /* Filter orders to include only those belonging to the rider's zone
-        const riderOrders = orders.filter((order) => {
-          const restaurantLocation = order.restaurant.location;
-          const isWithinZone = isLocationWithinZone(restaurantLocation, rider.zone);
-          return isWithinZone;
-        });*/
-          return orders;
-        } catch (error) {
-          console.error(error);
-          throw new Error('Failed to fetch rider orders');
-        }
+            }
+        
+            // Find orders associated with the rider and populate relevant fields
+            const orders = await Order.find({ rider: userId })
+              .populate({
+                path: 'restaurant',
+                select: '_id name address',
+              })
+              .populate({
+                path: 'deliveryAddress.location',
+                select: 'coordinates deliveryAddress label details',
+              })
+              .populate({
+                path: 'items',
+                select: '_id title food description quantity',
+                populate: {
+                  path: 'variation',
+                  select: '_id title price',
+                }
+              })
+              .populate({
+                path: 'items.addons',
+                select: '_id title description quantityMinimum quantityMaximum',
+                populate: {
+                  path: 'options',
+                  select: '_id title price',
+                },
+              })
+              .populate({
+                path: 'user',
+                select: '_id name phone',
+              })
+              .populate({
+                path: 'rider',
+                select: '_id name username',
+              });
+        
+            return orders;
+          } catch (error) {
+            console.error(error);
+            throw new Error('Failed to fetch rider orders');
+          }
         },
+        
         riderEarnings: async (_, { riderEarningsId, offset }) => {
         try {
           // Logic to fetch rider earnings based on the provided riderEarningsId and offset
