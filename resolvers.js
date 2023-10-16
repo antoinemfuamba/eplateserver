@@ -1087,32 +1087,7 @@ const resolvers = {
             if (!rider) {
               throw new Error('Rider not found');
             } 
-          const orders = await Order.find({ rider: userId }).populate([
-            {
-              path: 'restaurant',
-              populate: {
-                path: 'location',
-              },
-            },
-            {
-              path: 'deliveryAddress',
-              populate: {
-                path: 'location',
-              },
-            },
-            'items',
-            {
-              path: 'items.variation',
-            },
-            {
-              path: 'items.addons',
-              populate: {
-                path: 'options',
-              },
-            },
-            'user',
-            'rider',
-          ]);
+          const orders = await Order.find({ rider: userId });
         /* Filter orders to include only those belonging to the rider's zone
         const riderOrders = orders.filter((order) => {
           const restaurantLocation = order.restaurant.location;
