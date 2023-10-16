@@ -3547,7 +3547,7 @@ console.log(user);
         // Perform the necessary logic to update the order status
         try {
           // Assuming you have a model named 'Order' for working with orders
-          const order = await Order.findById(ObjectId(id));
+          const order = await Order.findById(id);
   
           if (!order) {
             throw new Error('Order not found');
@@ -3564,12 +3564,12 @@ console.log(user);
           throw new Error('Failed to update order status');
         }
       },
-    assignOrder: async (_, args, context) => {
+    assignOrder: async (_, {id}, context) => {
         
         try { 
           const { userId } = context;
           // Assuming you have a model named 'Order' for working with orders
-          const order = await Order.findById(userId);
+          const order = await Order.findById(id);
   
           if (!order) {
             throw new Error('Order not found');
