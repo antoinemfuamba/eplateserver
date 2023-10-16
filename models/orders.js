@@ -67,6 +67,14 @@ const orderSchema = new mongoose.Schema({
           type: Number,
           required: true,
         },
+        variation: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "variations", // Define the name of your variations model
+        },
+        addons: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "addons", // Define the name of your addons model
+        },
       },
     ],
     totalPrice: {
