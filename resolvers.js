@@ -2610,6 +2610,17 @@ const resolvers = {
     // Assign the rider to the order
     order.rider = rider;
     order.orderStatus = 'ASSIGNED'; // or the desired status
+           // Calculate the preparation time in minutes from the current time
+      /*  const currentTime = new Date();
+        const preparationTimeInMinutes = parseInt(time, 10); // Parse the time as an integer
+        if (!isNaN(preparationTimeInMinutes)) {
+          currentTime.setMinutes(currentTime.getMinutes() + preparationTimeInMinutes);
+          order.assignedAt = currentTime;
+        } else {
+          throw new Error('Invalid preparation time');
+        }*/
+        order.assignedAt = new Date();
+
     await order.save();
 
 
@@ -3038,7 +3049,13 @@ if (!existingRestaurant) {
     
         order.chatMessages.push(chatMessage);
         await order.save();
-    
+        // Publish the chat message
+        pubsub.publish('CHAT_MESSAGE_SENT', {
+          subscriptionNewMessage: {
+            orderId,
+            message: chatMessage,
+          },
+        });
         return {
           success: true,
           message: "Message sent successfully",
@@ -3268,7 +3285,15 @@ if (!existingRestaurant) {
       // Set paymentStatus to 'PAID' immediately
       paymentStatus = 'PAID';
     }
-
+       // Calculate the preparation time in minutes from the current time
+        const currentTime = new Date();
+        const preparationTimeInMinutes = parseInt(time, 10); // Parse the time as an integer
+        if (!isNaN(preparationTimeInMinutes)) {
+          currentTime.setMinutes(currentTime.getMinutes() + preparationTimeInMinutes);
+          newOrder.orderDate = currentTime;
+        } else {
+          throw new Error('Invalid preparation time');
+        }
     // Create the order object and save it in the database
     const newOrder = new Order({
       orderId,
@@ -3280,7 +3305,7 @@ if (!existingRestaurant) {
       taxationAmount,
       address,
       paidAmount: orderAmount,
-      orderDate: new Date(),
+      orderDate,
       isPickedUp,
       deliveryAddress,
       deliveryCharges,

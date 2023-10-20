@@ -77,7 +77,7 @@ const subscriptionResolvers = {
             }
   
             // Return the async iterator for the subscription
-            return context.pubsub.asyncIterator(`NEW_MESSAGE_${order}`);
+            return context.pubsub.asyncIterator(`CHAT_MESSAGE_SENT`);
           },
           (payload, variables) => {
             // Ensure the payload is sent only to subscribers who are interested in updates for the specified order
