@@ -3091,12 +3091,48 @@ if (!existingRestaurant) {
     
       orderTotal += itemPrice * quantity;
       console.log('Item:', orderItem);
-      console.log('Item:', orderItem);
     }
 
       // Log the intermediate values
       console.log('Subtotal:', orderTotal);
+    // Handle pickup orders
+    if (isPickedUp) {
+      // Set delivery charges to 0 for pickup orders
+      deliveryCharges = 0;
 
+      // Define a default pickup location (restaurant's address)
+      const defaultPickupLocation = {
+        latitude: restaurant.location.coordinates[1],
+        longitude: restaurant.location.coordinates[0],
+        deliveryAddress: restaurant.address,
+        details: 'Pickup at restaurant',
+        label: 'Restaurant Pickup',
+      };
+
+      // Use the default pickup location as the delivery address
+      address = defaultPickupLocation;
+
+     // Implement payment processing logic here
+     let paymentStatus = 'PENDING';
+     if (paymentMethod === 'CREDIT_CARD') {
+       // Implement credit card payment processing logic here
+       // Example: Call a payment gateway API
+       // if successful, set paymentStatus to 'PAID'
+       // else, keep it as 'PENDING' or 'FAILED'
+     } else if (paymentMethod === 'PAYPAL') {
+       // Implement PayPal payment processing logic here
+       // Example: Make an API request to PayPal
+       // if successful, set paymentStatus to 'PAID'
+       // else, keep it as 'PENDING' or 'FAILED'
+     } else if (paymentMethod === 'COD') {
+       // Cash on Delivery (COD) does not require online payment processing
+       // Set paymentStatus to 'PAID' immediately
+       paymentStatus = 'PAID';
+     }
+    } else {
+      // Calculate delivery charges, tipping, and taxation for delivery orders
+      orderTotal += deliveryCharges + tipping + taxationAmount;
+    }
       // Add delivery charges, tipping, and taxation
       orderTotal += deliveryCharges + tipping + taxationAmount;
 
