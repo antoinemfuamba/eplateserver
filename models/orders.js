@@ -71,10 +71,10 @@ const orderSchema = new mongoose.Schema({
           type: mongoose.Schema.Types.ObjectId,
           ref: "variations", // Define the name of your variations model
         },
-        addons: {
+        addons: [{
           type: mongoose.Schema.Types.ObjectId,
           ref: "addons", // Define the name of your addons model
-        },
+        }],
       },
     ],
     totalPrice: {
@@ -140,7 +140,7 @@ const orderSchema = new mongoose.Schema({
       type: String,
     },
     orderDate: {
-      type: String,
+      type: Date,
     },
     orderAmount: {
       type: Number,
