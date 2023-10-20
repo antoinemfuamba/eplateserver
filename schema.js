@@ -1080,7 +1080,6 @@ input OrderFoodInput {
     ): [Order]
     profile: User
     userFavourite(latitude: Float, longitude: Float): [WebRestaurant]!
-    sendChatMessage(orderId: ID!, messageInput: ChatMessageInput!): SendChatMessageResponse!
     orders(offset: Int): [Order!]!
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
