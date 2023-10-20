@@ -71,10 +71,6 @@ const orderSchema = new mongoose.Schema({
           type: mongoose.Schema.Types.ObjectId,
           ref: "variations", // Define the name of your variations model
         },
-        addons: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "addons", // Define the name of your addons model
-        },
       },
     ],
     totalPrice: {
