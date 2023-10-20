@@ -34,7 +34,7 @@ const orderSchema = new mongoose.Schema({
   },
   isPickedUp: {
     type: Boolean,
-    default: false,
+    //default: false,
   },
   addons: [
     {
