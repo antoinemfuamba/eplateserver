@@ -3134,7 +3134,7 @@ if (!existingRestaurant) {
       orderTotal += deliveryCharges + tipping + taxationAmount;
     }
       // Add delivery charges, tipping, and taxation
-      orderTotal += deliveryCharges + tipping + taxationAmount;
+     // orderTotal += deliveryCharges + tipping + taxationAmount;
 
       // Log the final orderTotal
       console.log('Final Order Total:', orderTotal);
@@ -3202,7 +3202,7 @@ if (!existingRestaurant) {
           description: food.description, // Set the appropriate description
           quantity: quantity, // Set the quantity
           variation: variation, // Set the variation
-          addons: addons, // Set the addons
+          addons: item.addons || [], // Set the addons
           specialInstructions: item.specialInstructions || '', // Include special instructions if provided
         });
 
