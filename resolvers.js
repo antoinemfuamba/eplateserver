@@ -1088,11 +1088,12 @@ const resolvers = {
             if (!rider) {
               throw new Error('Rider not found');
             }
-        
+            // Get the zone ID of the rider
+    const riderZoneId = rider.zone._id;
+
             // Find orders associated with the rider and populate relevant fields
             const orders = await Order.find({ 
-              'restaurant.zone': rider.zone._id, // Filter by the rider's zone
-              rider: userId,
+              'restaurant.zone': riderZoneId, // Filter by the rider's zone
              })
               .populate({
                 path: 'restaurant',
