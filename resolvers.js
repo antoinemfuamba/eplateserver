@@ -2487,6 +2487,15 @@ const resolvers = {
         throw new Error('Order not found');
       }
 
+          // Notify subscribers about the status change
+    pubsub.publish('ORDER_STATUS_CHANGED', {
+      subscriptionOrder: {
+        _id: order._id,
+        orderStatus: order.orderStatus,
+        rider: order.rider,
+      },
+    });
+
       // Update the order's status
       order.orderStatus = orderStatus;
       await order.save();
@@ -2587,11 +2596,28 @@ const resolvers = {
       throw new Error('Rider is not available');
     }
 
+      // After successfully assigning the rider, trigger the subscription
+      pubsub.publish('ASSIGN_RIDER', {
+        subscriptionAssignRider: {
+          order, // Include the updated order data
+          origin: 'new' // Indicate that a new assignment occurred
+        }
+      });
   
     // Assign the rider to the order
     order.rider = rider;
     order.orderStatus = 'ASSIGNED'; // or the desired status
     await order.save();
+
+
+        // After successfully assigning the rider, trigger the subscription
+        pubsub.publish(SUBSCRIPTION_ASSIGN_RIDER, {
+          subscriptionAssignRider: {
+            order, // Include the updated order data
+            origin: 'new' // Indicate that a new assignment occurred
+          }
+        });
+    
 
       // Return the updated order
       return order;
@@ -3266,10 +3292,15 @@ if (!existingRestaurant) {
 
     const savedOrder = await newOrder.save();
         // Publish a message to activate the subscription
-    // After saving the order, publish the orderId in the subscription payload
-    pubsub.publish('ORDER_PLACED', {
-      subscriptionOrder: savedOrder, // Include the order details
+    // Publish a message to activate the subscription for the restaurant's zone
+    pubsub.publish('ZONE_ORDER_PLACED', {
+      subscriptionZoneOrders: {
+        zoneId: restaurantInfo.zone, // Adjust this based on your data model
+        origin: 'new',
+        order: savedOrder, // Include the order details
+      },
     });
+
 
     return savedOrder;
       } catch (error) {

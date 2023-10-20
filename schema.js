@@ -986,7 +986,7 @@ input OrderFoodInput {
   }
 
   type SubscriptionZoneOrder {
-    zoneId: String
+    zoneId: String!
     origin: String
     order: Order
   }
@@ -997,7 +997,7 @@ input OrderFoodInput {
     rider: Rider!
   }
   type Subscription {
-    subscriptionOrder(id: String!): OrderSubscriptionPayload
+    subscriptionOrder(id: String!): Order
     orderStatusChanged(userId: String!): OrderStatusChangedSubscriptionPayload
     subscribePlaceOrder(restaurant: String!): PlaceOrderSubscriptionPayload
     subscriptionZoneOrders(zoneId: String!): SubscriptionZoneOrder

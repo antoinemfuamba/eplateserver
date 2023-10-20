@@ -12,7 +12,7 @@ const subscriptionResolvers = {
             }
   
             // Return the async iterator for the subscription
-            return context.pubsub.asyncIterator(`ORDER_PLACED`);
+            return context.pubsub.asyncIterator(`ORDER_STATUS_CHANGED`);
           },
           (payload, variables) => {
             // Ensure the payload is sent only to subscribers who are interested in updates for the specified order (id)
@@ -87,7 +87,7 @@ const subscriptionResolvers = {
       subscriptionZoneOrders: {
         subscribe: withFilter(
           (_, { zoneId }, { pubsub }) => {
-            const channel = `ZONE_ORDERS_${zoneId}`;
+            const channel = `ZONE_ORDER_PLACED`;
             return pubsub.asyncIterator(channel);
           },
           (payload, variables) => {
