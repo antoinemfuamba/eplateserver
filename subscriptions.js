@@ -2,6 +2,7 @@ const { withFilter } = require('graphql-subscriptions');
 
 const subscriptionResolvers = {
   Subscription: {
+    //Test
      subscriptionOrder: {
         subscribe: withFilter(
           (_, { id }, context) => {
@@ -84,6 +85,7 @@ const subscriptionResolvers = {
           }
         ),
       },
+      //Testing
       subscriptionZoneOrders: {
         subscribe: withFilter(
           (_, { zoneId }, { pubsub }) => {

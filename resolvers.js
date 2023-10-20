@@ -7,6 +7,7 @@ const Promotion = require('./models/promotions');
 const Review = require('./models/reviews');
 const ReviewData = require('./models/reviewData');
 const Delivery = require('./models/delivery');
+const ChatMessage = require('./models/chatmessage');
 const Restaurant = require('./models/restaurants');
 const Variation = require('./models/variations');
 const Commission = require('./models/commission');
@@ -1089,7 +1090,10 @@ const resolvers = {
             }
         
             // Find orders associated with the rider and populate relevant fields
-            const orders = await Order.find({ rider: userId })
+            const orders = await Order.find({ 
+              'restaurant.zone': rider.zone._id, // Filter by the rider's zone
+              rider: userId,
+             })
               .populate({
                 path: 'restaurant',
                 select: '_id name address',
