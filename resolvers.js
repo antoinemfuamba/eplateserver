@@ -1088,13 +1088,11 @@ const resolvers = {
             if (!rider) {
               throw new Error('Rider not found');
             }
-            // Get the zone ID of the rider
-    const riderZoneId = rider.zone._id;
+            // Find all restaurants in the same zone as the rider
+           const restaurantsInZone = await Restaurant.find({ zone: rider.zone });
 
-            // Find orders associated with the rider and populate relevant fields
-            const orders = await Order.find({ 
-              'restaurant.zone': riderZoneId, // Filter by the rider's zone
-             })
+           // Find orders associated with those restaurants
+           const orders = await Order.find({ restaurant: { $in: restaurantsInZone } })
               .populate({
                 path: 'restaurant',
                 select: '_id name address',
