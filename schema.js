@@ -204,10 +204,6 @@ input EmailConfigurationInput {
     user: UserInput!
   }
 
-  input UserInput {
-    id: ID!
-    name: String!
-  }
   type SendOtpResponse {
     result: String
   }
@@ -824,9 +820,10 @@ scalar minute
   }
 
   input UserInput {
-    name: String!
-    email: String!
-    password: String!
+    id:ID
+    name: String
+    email: String
+    password: String
     phone: String
     address: String
   }
