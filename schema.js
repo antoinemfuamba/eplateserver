@@ -1003,7 +1003,7 @@ input OrderFoodInput {
     subscriptionZoneOrders(zoneId: String!): SubscriptionZoneOrder
     subscriptionAssignRider(riderId: String!): AssignRiderPayload!
     subscriptionRiderLocation(riderId: String!): Rider!
-    subscriptionNewMessage(order: ID!): Message!
+    subscriptionNewMessage(order: ID!): ChatMessage!
     subscribeOrderStatus(_id: String!): OrderStatusUpdate!
 
   }
