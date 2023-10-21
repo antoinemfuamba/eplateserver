@@ -3764,13 +3764,6 @@ console.log(user);
         } catch (error) {
           console.error('Error in sendChatMessage resolver:', error);
           throw new Error('Failed to send chat message');
-
-                // If there's an error, return an error response
-          return {
-            success: false,
-            message: 'Failed to send chat message',
-            data: null  // Set data to null or omit it for error responses
-          };  
         }
       },
            /****************************************************************************************************************************
