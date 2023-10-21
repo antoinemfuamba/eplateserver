@@ -3749,7 +3749,10 @@ console.log(user);
           const chatMessage = await ChatMessage.create({
             orderId,
             message: messageInput.message,
-            user: messageInput.user
+            user: {
+              id: messageInput.user._id, // Use correct field names
+              name: messageInput.user.name, // Use correct field names
+            },
           });
   
           // Return the success status, message, and created chat message data
@@ -3759,7 +3762,7 @@ console.log(user);
             data: chatMessage
           };
         } catch (error) {
-          console.error(error);
+          console.error('Error in sendChatMessage resolver:', error);
           throw new Error('Failed to send chat message');
 
                 // If there's an error, return an error response
