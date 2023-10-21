@@ -201,10 +201,13 @@ input EmailConfigurationInput {
   
   input ChatMessageInput {
     message: String!
-    user: User!
-
+    user: UserInput!
   }
 
+  input UserInput {
+    id: ID!
+    name: String!
+  }
   type SendOtpResponse {
     result: String
   }
