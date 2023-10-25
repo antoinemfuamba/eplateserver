@@ -2,6 +2,7 @@
 const Owner = require('./models/Owner');
 const User = require('./models/users');
 const Food = require('./models/foods');
+const Earning = require('./models/earning');
 const Vendor = require('./models/vendors');
 const Promotion = require('./models/promotions');
 const Review = require('./models/reviews');
@@ -1845,7 +1846,7 @@ const resolvers = {
         }
     
         // Generate a new token
-        const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET, { expiresIn: '2h' });
+        const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET);
     
         // Update the user's token in the database
         user.token = token;
@@ -1858,7 +1859,6 @@ const resolvers = {
         return {
           userId: user._id.toString(),
           token,
-          tokenExpiration: 2,
           name: user.name,
           email: user.email,
           phone: user.phone,
@@ -3488,7 +3488,7 @@ if (!existingRestaurant) {
       }
 
       // Generate a new token
-      const token = jwt.sign({ userId: user.id }, JwtConfig.JWT_SECRET, { expiresIn: '5h' });
+      const token = jwt.sign({ userId: user.id }, JwtConfig.JWT_SECRET);
 
       // Update the user's token in the database
       user.token = token;
@@ -3498,7 +3498,6 @@ if (!existingRestaurant) {
       return { 
         userId: user.id,
         token: token,
-        tokenExpiration: 5,
         name: user.name,
         email: user.email,
         phone: user.phone };
@@ -3619,7 +3618,7 @@ if (!existingRestaurant) {
       throw new ApolloError('Invalid password');
     }
           // Generate a new token
-          const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET, { expiresIn: '2h' });
+          const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET);
           // Update the user's token in the database
           user.token = token;
           user.notificationToken = notificationToken; 
@@ -3789,7 +3788,7 @@ console.log(user);
       throw new ApolloError('Invalid password');
     }
           // Generate a new token
-          const token = jwt.sign({ restaurantId: user._id.toString() }, JwtConfig.JWT_SECRET, { expiresIn: '2h' });
+          const token = jwt.sign({ restaurantId: user._id.toString() }, JwtConfig.JWT_SECRET);
           // Update the user's token in the database
           user.token = token;
           // user.notificationToken = notificationToken; 
