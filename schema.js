@@ -144,7 +144,7 @@ input EmailConfigurationInput {
     image: String
     slug: String
     location: Locat
-    deliveryBounds: Coordinates
+    deliveryBounds: Locat
     address: String
     userType: String!
     deliveryTime: Int
@@ -1081,7 +1081,7 @@ input OrderFoodInput {
       search: String
     ): [Order]
     profile: User
-    userFavourite(latitude: Float, longitude: Float): [Restaurant]!
+    userFavourite(latitude: Float, longitude: Float): [WebRestaurant]!
     orders(offset: Int): [Order!]!
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
