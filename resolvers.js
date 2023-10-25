@@ -721,17 +721,28 @@ const resolvers = {
         throw new Error('Failed to fetch user');
       }
     },
-    userFavourite: async (_, { latitude, longitude }) => {
+    userFavourite: async (_, { latitude, longitude },context) => {
       try {
-        // Your logic to fetch user's favorite restaurants based on latitude and longitude
-        // For example, you can use the provided latitude and longitude to determine the user's location
-        // and then query the database to fetch favorite restaurants based on that location.
-        const favoriteRestaurants = await Restaurant.find({
-          // Your query condition based on latitude and longitude here
-          location: { $near: { $geometry: { type: "Point", coordinates: [longitude, latitude] }, $maxDistance: 10000 } }
-        }).limit(10);
+        const {userId} = context;
+                // Ensure that latitude and longitude are valid numbers
+                if (isNaN(latitude) || isNaN(longitude)) {
+                  throw new Error('Invalid coordinates provided');
+                }
+        
+    // Find the user by some identifier, e.g., user ID, and populate the 'favourite' field.
+    const user = await User.findById(userId).populate('favourite');
+    
+    if (!user) {
+      // User not found, return an empty array.
+      return [];
+    }
 
-        return favoriteRestaurants;
+    // Extract the favorite restaurants from the user model.
+    const favoriteRestaurants = user.favourite;
+
+   
+                console.log('Favorite Restaurants:', favoriteRestaurants);
+                return favoriteRestaurants;
       } catch (error) {
         console.error(error);
         throw new Error('Failed to fetch favorite restaurants');
