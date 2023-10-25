@@ -975,7 +975,7 @@ input OrderFoodInput {
     userId: ID!
     restaurantId: ID!
     token: String!
-    tokenExpiration: Int!
+    tokenExpiration: Int
     name: String!
     email: String!
     phone: String
