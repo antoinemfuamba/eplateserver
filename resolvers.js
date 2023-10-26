@@ -3296,8 +3296,7 @@ if (!existingRestaurant) {
       // Set paymentStatus to 'PAID' immediately
       paymentStatus = 'PAID';
     }
-     // Calculate the orderDate
-
+  
     // Create the order object and save it in the database
     const newOrder = new Order({
       orderId,
@@ -3319,6 +3318,7 @@ if (!existingRestaurant) {
       orderAmount: orderAmount,
       paymentStatus,
       createdAt: new Date(),
+  
     });
 
     const savedOrder = await newOrder.save();
