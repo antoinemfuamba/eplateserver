@@ -3297,8 +3297,7 @@ if (!existingRestaurant) {
       paymentStatus = 'PAID';
     }
      // Calculate the orderDate
-     const orderDate = new Date(); // Use the current date and time as the orderDate
-     //const createdAt = new Date();
+
     // Create the order object and save it in the database
     const newOrder = new Order({
       orderId,
@@ -3310,7 +3309,7 @@ if (!existingRestaurant) {
       taxationAmount,
       address,
       paidAmount: orderAmount,
-      orderDate,
+      orderDate: new Date(),
       isPickedUp,
       deliveryAddress,
       deliveryCharges,
