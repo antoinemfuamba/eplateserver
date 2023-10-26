@@ -484,7 +484,7 @@ input EmailConfigurationInput {
     deliveryCharges: Float
     tipping: Float
     taxationAmount: Float
-    createdAt: String
+    createdAt: Date
     status: String
     completionTime: String
     cancelledAt: String
@@ -497,7 +497,7 @@ input EmailConfigurationInput {
     paymentStatus: String
     paymentMethod: String
     orderAmount: Float
-    orderDate: String
+    orderDate: Date
     pickedAt: String
     expectedTime: String
     isPickedUp: Boolean
