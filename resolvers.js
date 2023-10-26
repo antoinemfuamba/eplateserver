@@ -3317,6 +3317,7 @@ if (!existingRestaurant) {
       orderStatus: 'PENDING', // Set the initial order status as pending or any default value you prefer
       orderAmount: orderAmount,
       paymentStatus,
+      createdAt,
   
     });
 
