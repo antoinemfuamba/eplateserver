@@ -3298,7 +3298,7 @@ if (!existingRestaurant) {
     }
      // Calculate the orderDate
      const orderDate = new Date(); // Use the current date and time as the orderDate
-     const createdAt = new Date();
+     //const createdAt = new Date();
     // Create the order object and save it in the database
     const newOrder = new Order({
       orderId,
@@ -3319,7 +3319,7 @@ if (!existingRestaurant) {
       orderStatus: 'PENDING', // Set the initial order status as pending or any default value you prefer
       orderAmount: orderAmount,
       paymentStatus,
-      createdAt
+      createdAt: new Date(),
     });
 
     const savedOrder = await newOrder.save();
