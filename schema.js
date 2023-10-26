@@ -173,9 +173,9 @@ input EmailConfigurationInput {
     title: String!
     price: Float!
     discounted: Float
-    addons: [String!]!
-    createdAt: String!
-    updatedAt: String!
+    addons: [String]
+    createdAt: String
+    updatedAt: String
   }
 
   type ResetPasswordResult {

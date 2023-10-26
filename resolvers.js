@@ -3296,15 +3296,9 @@ if (!existingRestaurant) {
       // Set paymentStatus to 'PAID' immediately
       paymentStatus = 'PAID';
     }
-       // Calculate the preparation time in minutes from the current time
-        const currentTime = new Date();
-        const preparationTimeInMinutes = parseInt(time, 10); // Parse the time as an integer
-        if (!isNaN(preparationTimeInMinutes)) {
-          currentTime.setMinutes(currentTime.getMinutes() + preparationTimeInMinutes);
-          newOrder.orderDate = currentTime;
-        } else {
-          throw new Error('Invalid preparation time');
-        }
+    // Set the orderDate to the current time
+    const currentTime = new Date();
+    newOrder.orderDate = currentTime;
     // Create the order object and save it in the database
     const newOrder = new Order({
       orderId,
