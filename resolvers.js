@@ -3296,7 +3296,9 @@ if (!existingRestaurant) {
       // Set paymentStatus to 'PAID' immediately
       paymentStatus = 'PAID';
     }
-  
+     // Calculate the orderDate
+     const orderDate = new Date(); // Use the current date and time as the orderDate
+
     // Create the order object and save it in the database
     const newOrder = new Order({
       orderId,
@@ -3308,7 +3310,7 @@ if (!existingRestaurant) {
       taxationAmount,
       address,
       paidAmount: orderAmount,
-      orderDate: new Date(),
+      orderDate,
       isPickedUp,
       deliveryAddress,
       deliveryCharges,
@@ -3317,7 +3319,6 @@ if (!existingRestaurant) {
       orderStatus: 'PENDING', // Set the initial order status as pending or any default value you prefer
       orderAmount: orderAmount,
       paymentStatus,
-      createdAt,
   
     });
 
