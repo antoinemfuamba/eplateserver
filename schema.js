@@ -950,11 +950,11 @@ input OrderFoodInput {
 
   type Configuration {
     _id: ID!
-    configuration_id: String!
-    email: String!
-    emailName: String!
-    password: String!
-    enableEmail: Boolean!
+    configuration_id: String
+    email: String
+    emailName: String
+    password: String
+    enableEmail: Boolean
     clientId: String
     clientSecret: String
     sandbox: Boolean
