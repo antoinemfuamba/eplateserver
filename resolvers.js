@@ -2522,39 +2522,33 @@ const resolvers = {
     }
   },
   //DONE
-  toggleAvailability: async (_, { id },context) => {
+  toggleAvailability: async (_, { id }, context) => {
     try {
-            if (!id) {
-        throw new Error('ID parameter is required');
+      if (context.userId) {
+        // Toggle restaurant availability
+        const restaurant = await Restaurant.findById(context.userId);
+        if (restaurant) {
+          restaurant.isAvailable = !restaurant.isAvailable;
+          await restaurant.save();
+          return { _id: restaurant._id, isAvailable: restaurant.isAvailable };
+        }
       }
   
-      const { userId} = context.userId;
-      if (userId) {
-        // Toggle restaurant availability
-        const restaurant = await Restaurant.findById(userId);
-        if (!restaurant) {
-          throw new Error('Restaurant not found');
-        }
-        restaurant.isAvailable = !restaurant.isAvailable;
-        await restaurant.save();
-        return { _id: restaurant._id, isAvailable: restaurant.isAvailable };
-      } else if (id) {
-        // Toggle rider availability
-        const rider = await Rider.findById(id);
-        if (!rider) {
-          throw new Error('Rider not found');
-        }
+      // Toggle rider availability
+      const rider = await Rider.findById(id);
+      if (rider) {
         rider.available = !rider.available;
         await rider.save();
         return { _id: rider._id, isAvailable: rider.available };
-      } else {
-        throw new Error('Invalid context');
       }
+  
+      throw new Error('Failed to toggle availability');
     } catch (error) {
       console.error(error);
-      throw new Error('Failed to toggle rider availability');
+      throw new Error('Failed to toggle availability');
     }
   },
+  
   /*toggleAvailability: async (_, { id }, context) => {
     try {
       if (!id) {
