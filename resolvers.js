@@ -2537,7 +2537,7 @@ const resolvers = {
         }
         restaurant.isAvailable = !restaurant.isAvailable;
         await restaurant.save();
-        return restaurant;
+        return { _id: restaurant._id, isAvailable: restaurant.isAvailable };
       } else if (id) {
         // Toggle rider availability
         const rider = await Rider.findById(id);
@@ -2546,7 +2546,7 @@ const resolvers = {
         }
         rider.available = !rider.available;
         await rider.save();
-        return rider;
+        return { _id: rider._id, isAvailable: rider.available };
       } else {
         throw new Error('Invalid context');
       }
