@@ -144,6 +144,12 @@ const restaurantSchema = new mongoose.Schema({
     isActive: {
       type: Boolean,
     },
+    notificationToken: {
+      type: String,
+    },
+    enableNotification: {
+      type: Boolean,
+    },
     openingTimes:[
       {
         type: mongoose.Schema.Types.ObjectId,

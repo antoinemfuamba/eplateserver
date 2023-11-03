@@ -119,6 +119,8 @@ input EmailConfigurationInput {
     owner: Vendor
     isActive: Boolean
     foods: [Food]
+    notificationToken: String,
+    enableNotification: Boolean,
     reviewData: ReviewData
     categories: [Category!]
     options: [Option!]
