@@ -223,7 +223,7 @@ const resolvers = {
       }
     },
     //DONE -The categories-The Option
-    restaurantin: async (_, { id }) => {
+   /* restaurantin: async (_, { id }) => {
       try {
         const restaurant = await Restaurant.findById(id)
         .populate({
@@ -263,7 +263,37 @@ const resolvers = {
         console.error(error);
         throw new Error('Failed to fetch vendor');
       }
-    },
+    },*/
+// Merged Resolver
+restaurantin: async (_, { id }) => {
+  try {
+    const restaurant = await Restaurant.findById(id)
+      .populate({
+        path: 'categories',
+        populate: {
+          path: 'foods',
+          populate: {
+            path: 'variations',
+          },
+        },
+      })
+      .populate('options')
+      .populate('addons.options')
+      .populate('location')
+      .populate('deliveryBounds')
+      .populate('openingTimes')
+      .populate('owner');
+
+    if (!restaurant) {
+      throw new Error('Restaurant not found');
+    }
+
+    return restaurant;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch restaurant data');
+  }
+},
 
     getPromotion: async (_, { id }) => {
       try {
