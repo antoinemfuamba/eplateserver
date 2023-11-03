@@ -297,13 +297,15 @@ restaurantin: async (_, { id }) => {
 // Combined resolver for fetching restaurant information
 restaurantinfo: async (_, { id }) => {
   try {
-    const restaurant = await Restaurant.findById(id);
+    const restaurant = await Restaurant.findById(id)
+    .populate('location')
+    .populate('openingTimes');
 
-    if (!restaurant) {
-      throw new Error('Restaurant not found');
-    }
+  if (!restaurant) {
+    throw new Error('Restaurant not found');
+  }
 
-    return restaurant;
+  return restaurant;
   } catch (error) {
     console.error(error);
     throw new Error('Failed to fetch restaurant data');
