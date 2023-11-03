@@ -1089,6 +1089,7 @@ input OrderFoodInput {
     order(id: String!): Order
     orderCount(restaurant: String!): Int!
     restaurantin(id: String): Restaurant
+    restaurantinfo(id: String): Restaurant
     restaurant(id: String, slug: String): WebRestaurant
     restaurantDetail(id: String): Restaurant
     restaurants: [Restaurant]!

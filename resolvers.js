@@ -265,7 +265,7 @@ const resolvers = {
       }
     },*/
 // Merged Resolver
-/*restaurantin: async (_, { id }) => {
+restaurantin: async (_, { id }) => {
   try {
     const restaurant = await Restaurant.findById(id)
       .populate({
@@ -293,102 +293,23 @@ const resolvers = {
     console.error(error);
     throw new Error('Failed to fetch restaurant data');
   }
-},*/
+},
 // Combined resolver for fetching restaurant information
-restaurantin: async (_, { id }) => {
+restaurantinfo: async (_, { id }) => {
   try {
-    const restaurant = await Restaurant.findById(id)
-      .populate({
-        path: 'categories',
-        populate: {
-          path: 'foods',
-          populate: {
-            path: 'variations',
-          },
-        },
-      })
-      .populate('options')
-      .populate('addons.options')
-      .populate('location')
-      .populate('deliveryBounds')
-      .populate('openingTimes')
-      .populate('owner');
+    const restaurant = await Restaurant.findById(id);
 
     if (!restaurant) {
       throw new Error('Restaurant not found');
     }
 
-    // Construct the response object based on the requested fields
-    const response = {
-      _id: restaurant._id,
-      orderId: restaurant.orderId,
-      orderPrefix: restaurant.orderPrefix,
-      name: restaurant.name,
-      image: restaurant.image,
-      address: restaurant.address,
-      location: restaurant.location ? restaurant.location.coordinates : null,
-      deliveryTime: restaurant.deliveryTime,
-      username: restaurant.username,
-      isAvailable: restaurant.isAvailable,
-      notificationToken: restaurant.notificationToken,
-      enableNotification: restaurant.enableNotification,
-      openingTimes: restaurant.openingTimes,
-    };
-
-    // Include additional fields from the getRestaurantProfile and getRestaurantDetail queries
-    if (restaurant.owner) {
-      response.slug = restaurant.slug;
-      response.minimumOrder = restaurant.minimumOrder;
-      response.tax = restaurant.tax;
-      response.deliveryBounds = restaurant.deliveryBounds.coordinates;
-      response.owner = {
-        _id: restaurant.owner._id,
-        email: restaurant.owner.email,
-      };
-    }
-
-    if (restaurant.categories) {
-      response.categories = restaurant.categories.map((category) => {
-        return {
-          _id: category._id,
-          title: category.title,
-          foods: category.foods.map((food) => {
-            return {
-              _id: food._id,
-              title: food.title,
-              description: food.description,
-              variations: food.variations,
-              image: food.image,
-              isActive: food.isActive,
-            };
-          }),
-        };
-      });
-    }
-
-    if (restaurant.options) {
-      response.options = restaurant.options;
-    }
-
-    if (restaurant.addons) {
-      response.addons = restaurant.addons.map((addon) => {
-        return {
-          _id: addon._id,
-          options: addon.options,
-          title: addon.title,
-          description: addon.description,
-          quantityMinimum: addon.quantityMinimum,
-          quantityMaximum: addon.quantityMaximum,
-        };
-      });
-    }
-
-    return response;
+    return restaurant;
   } catch (error) {
     console.error(error);
     throw new Error('Failed to fetch restaurant data');
   }
 },
+
 
     getPromotion: async (_, { id }) => {
       try {
