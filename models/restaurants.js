@@ -149,6 +149,7 @@ const restaurantSchema = new mongoose.Schema({
     },
     enableNotification: {
       type: Boolean,
+      default: true,
     },
     openingTimes:[
       {
