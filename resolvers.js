@@ -288,24 +288,7 @@ restaurantin: async (_, { id }) => {
       throw new Error('Restaurant not found');
     }
 
-    // Construct the response object based on the fields requested in the query
-    const response = {
-      _id: restaurant._id,
-      orderId: restaurant.orderId,
-      orderPrefix: restaurant.orderPrefix,
-      name: restaurant.name,
-      image: restaurant.image,
-      address: restaurant.address,
-      location: restaurant.location ? restaurant.location.coordinates : null,
-      deliveryTime: restaurant.deliveryTime,
-      username: restaurant.username,
-      isAvailable: restaurant.isAvailable,
-      notificationToken: restaurant.notificationToken,
-      enableNotification: restaurant.enableNotification,
-      openingTimes: restaurant.openingTimes,
-    };
-
-    return response;
+    return restaurant;
   } catch (error) {
     console.error(error);
     throw new Error('Failed to fetch restaurant data');
