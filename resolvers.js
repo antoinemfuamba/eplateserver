@@ -287,7 +287,7 @@ restaurantin: async (_, { id }) => {
     if (!restaurant) {
       throw new Error('Restaurant not found');
     }
-
+console.log(restaurant)
     return restaurant;
   } catch (error) {
     console.error(error);
@@ -3934,11 +3934,11 @@ console.log(user);
     },
     saveRestaurantToken: async (_, { token, isEnabled }, context) => {
       try {
-        const {restaurantId} = context;
+        const {userId} = context;
 
         // Find the restaurant by the provided ID
-        const restaurant = await Restaurant.findById(restaurantId);
-
+        const restaurant = await Restaurant.findById(userId);
+console.log(userId)
         if (!restaurant) {
           throw new Error('Restaurant not found');
         }
