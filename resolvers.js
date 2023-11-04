@@ -3816,7 +3816,7 @@ console.log(user);
            /****************************************************************************************************************************
                                         RESTAURANT MUTATIONS - START
     *****************************************************************************************************************************/
-    restaurantLogin: async (_, { username, password }) => {
+    restaurantLogin: async (_, { username, password, notificationToken }) => {
           try {
           
             // Find the user with the provided email
@@ -3836,14 +3836,14 @@ console.log(user);
           const token = jwt.sign({ restaurantId: user._id.toString() }, JwtConfig.JWT_SECRET);
           // Update the user's token in the database
           user.token = token;
-          // user.notificationToken = notificationToken; 
+          user.notificationToken = notificationToken; 
           await user.save();
 
           // Return the user and token
           return {
             restaurantId: user._id.toString(),
             token,
-            
+            notificationToken
           };
           } catch (error) {
             console.error(error);
