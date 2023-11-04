@@ -285,6 +285,7 @@ restaurantin: async (_, { id }) => {
       .populate('owner');
 
     if (!restaurant) {
+      console.log('Restaurant not found for ID:', id);
       throw new Error('Restaurant not found');
     }
 console.log(restaurant)
