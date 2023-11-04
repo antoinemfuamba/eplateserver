@@ -3935,23 +3935,28 @@ console.log(user);
     },
     saveRestaurantToken: async (_, { token, isEnabled }, context) => {
       try {
-        const {userId} = context;
+    // Find the restaurant by the provided token
+    const restaurant = await Restaurant.findOne({ notificationToken: token });
 
-        // Find the restaurant by the provided ID
-        const restaurant = await Restaurant.findById(userId);
-console.log(userId)
-        if (!restaurant) {
-          throw new Error('Restaurant not found');
-        }
+    if (!restaurant) {
+      // If the restaurant doesn't exist with the provided token, create a new one
+      const newRestaurant = new Restaurant({
+        notificationToken: token,
+        enableNotification: isEnabled,
+      });
+      const savedRestaurant = await newRestaurant.save();
 
-        // Update the notification token and enableNotification status
-        restaurant.notificationToken = token;
-        restaurant.enableNotification = isEnabled;
-console.log(restaurant.notificationToken)
-        // Save the updated restaurant
-        const updatedRestaurant = await restaurant.save();
+      return savedRestaurant;
+    }
 
-        return updatedRestaurant;
+    // Update the notification token and enableNotification status
+    restaurant.notificationToken = token;
+    restaurant.enableNotification = isEnabled;
+
+    // Save the updated restaurant
+    const updatedRestaurant = await restaurant.save();
+
+    return updatedRestaurant;
       } catch (error) {
         console.error(JSON.stringify(error));
         throw new Error('Failed to save restaurant token');
