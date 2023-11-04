@@ -121,6 +121,7 @@ input EmailConfigurationInput {
     foods: [Food]
     notificationToken: String,
     enableNotification: Boolean,
+    isEnabled: Boolean
     reviewData: ReviewData
     categories: [Category!]
     options: [Option!]
