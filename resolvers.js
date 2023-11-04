@@ -3947,13 +3947,13 @@ console.log(userId)
         // Update the notification token and enableNotification status
         restaurant.notificationToken = token;
         restaurant.enableNotification = isEnabled;
-
+console.log(restaurant.notificationToken)
         // Save the updated restaurant
         const updatedRestaurant = await restaurant.save();
 
         return updatedRestaurant;
       } catch (error) {
-        console.error(error);
+        console.error(JSON.stringify(error));
         throw new Error('Failed to save restaurant token');
       }
     },
