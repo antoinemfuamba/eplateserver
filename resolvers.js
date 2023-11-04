@@ -3943,11 +3943,16 @@ console.log(userId)
         if (!restaurant) {
           throw new Error('Restaurant not found');
         }
-console.log("The token and isEnabled", token+isEnabled)
-        // Update the notification token and enableNotification status
-        restaurant.notificationToken = token;
+        // Check if notificationToken is null, and assign the token if it is
+        if (restaurant.notificationToken === null) {
+          restaurant.notificationToken = token;
+        } else {
+          // If notificationToken is not null, update it with the new token
+          restaurant.notificationToken = token;
+        }
+
+        // Set the enableNotification status
         restaurant.enableNotification = isEnabled;
-console.log(restaurant.notificationToken)
         // Save the updated restaurant
         const updatedRestaurant = await restaurant.save();
 
