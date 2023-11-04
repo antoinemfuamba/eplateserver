@@ -1405,6 +1405,7 @@ restaurantinfo: async (_, { id }) => {
               username: restaurantInput.username,
               password: restaurantInput.password,
               location: restaurantInput.location,
+              orderPrefix: restaurantInput.orderPrefix,
               isAvailable: restaurantInput.isAvailable,
               minimumOrder: restaurantInput.minimumOrder,
               tax: restaurantInput.tax,
