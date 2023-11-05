@@ -3206,7 +3206,6 @@ if (!existingRestaurant) {
       const itemPrice = variation.price;
     
       orderTotal += itemPrice * quantity;
-      console.log('Item:', orderItem);
     }
 
       // Log the intermediate values
@@ -3260,7 +3259,7 @@ if (!existingRestaurant) {
     }
 
     // Convert orderTotal to a number
-    const orderAmount = parseFloat(orderTotal);
+    const orderAmount = parseFloat(orderTotal.toFixed(2)); // Format orderAmount to 2 decimal places
 
     if (isNaN(latitude) || isNaN(longitude) || !restaurant) {
       throw new Error('Invalid restaurant or location coordinates');
