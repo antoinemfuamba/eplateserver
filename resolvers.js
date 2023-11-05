@@ -3950,11 +3950,11 @@ console.log(user);
     },
     saveRestaurantToken: async (_, { token, isEnabled }, context) => {
       try {
-        const {userId} = context;
+        const {restaurantId} = context;
 
         // Find the restaurant by the provided ID
-        const restaurant = await Restaurant.findById(userId);
-console.log(userId)
+        const restaurant = await Restaurant.findById(restaurantId);
+console.log(restaurantId)
         if (!restaurant) {
           throw new Error('Restaurant not found');
         }
