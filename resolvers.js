@@ -2579,7 +2579,7 @@ restaurantinfo: async (_, { id }) => {
        if (!id) {
         const { restaurantId } = context;
         console.log("The Restaurant ID",restaurantId)
-        if (!userId) {
+        if (!restaurantId) {
           throw new Error('User ID not found in context');
         }
 
