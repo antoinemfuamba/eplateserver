@@ -3685,7 +3685,6 @@ if (!existingRestaurant) {
           user.token = token;
           user.notificationToken = notificationToken; 
           await user.save();
-console.log(user);
           return {
             user,
             userId: user._id.toString(),
@@ -3708,9 +3707,38 @@ console.log(user);
           if (!order) {
             throw new Error('Order not found');
           }
-  
-          // Update the order status
-          order.orderStatus = status;
+
+          const currentTime = new Date();
+
+          switch (status) {
+            case 'ACCEPTED':
+              order.orderStatus = status;
+              order.acceptedAt = currentTime;
+              break;
+      
+            case 'ASSIGNED':
+              order.orderStatus = status;
+              order.assignedAt = currentTime;
+              break;
+      
+            case 'PICKED':
+              order.orderStatus = status;
+              order.pickedAt = currentTime;
+              break;
+      
+            case 'DELIVERED':
+              order.orderStatus = status;
+              order.deliveredAt = currentTime;
+              break;
+      
+            case 'CANCELLED':
+              order.orderStatus = status;
+              order.cancelledAt = currentTime;
+              break;
+      
+            default:
+              throw new Error('Invalid order status');
+          }
           // Save the updated order
         const updatedOrder = await order.save();
         
@@ -3741,7 +3769,7 @@ console.log(user);
           // Assign the order to the rider
           order.rider = rider._id;
           order.orderStatus = 'ASSIGNED';
-        
+          order.assignedAt = new Date();
           // Save the updated order
           const updatedOrder = await order.save();
           
@@ -3867,6 +3895,7 @@ console.log(user);
             throw new Error('Failed to login');
           }
     },
+    //DONE
     acceptOrder: async (_, { _id, time }) => {
       try {
         // Validate inputs and perform necessary checks
@@ -3954,7 +3983,6 @@ console.log(user);
 
         // Find the restaurant by the provided ID
         const restaurant = await Restaurant.findById(restaurantId);
-console.log(restaurantId)
         if (!restaurant) {
           throw new Error('Restaurant not found');
         }
