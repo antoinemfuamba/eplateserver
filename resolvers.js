@@ -2575,25 +2575,33 @@ restaurantinfo: async (_, { id }) => {
   //DONE
   toggleAvailability: async (_, { id }, context) => {
     try {
-      if (context.userId) {
+      const {userId} = context;
+      if (userId) {
         // Toggle restaurant availability
-        const restaurant = await Restaurant.findById(context.userId);
-        if (restaurant) {
-          restaurant.isAvailable = !restaurant.isAvailable;
-          await restaurant.save();
-          return { _id: restaurant._id, isAvailable: restaurant.isAvailable };
+        const restaurant = await Restaurant.findById(userId);
+        if (!restaurant) {
+          throw new Error('Restaurant not found');
         }
-      }
+
+        // Toggle restaurant's availability
+        restaurant.isAvailable = !restaurant.isAvailable;
+        await restaurant.save();
+          return restaurant;
+        }
+      
   
       // Toggle rider availability
       const rider = await Rider.findById(id);
-      if (rider) {
-        rider.available = !rider.available;
-        await rider.save();
-        return { _id: rider._id, isAvailable: rider.available };
+      if (!rider) {
+        throw new Error('Rider not found');
       }
+
+      // Toggle rider's availability
+      rider.isAvailable = !rider.isAvailable;
+      await rider.save();
+        return rider;
+      
   
-      throw new Error('Failed to toggle availability');
     } catch (error) {
       console.error(error);
       throw new Error('Failed to toggle availability');
