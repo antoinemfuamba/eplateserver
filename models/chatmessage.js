@@ -4,7 +4,7 @@ const chatMessageSchema = new mongoose.Schema(
   {
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Order',
+      ref: 'orders',
       required: true
     },
     message: {
@@ -14,7 +14,7 @@ const chatMessageSchema = new mongoose.Schema(
     user: {
       id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'users',
         required: true
       },
       name: {

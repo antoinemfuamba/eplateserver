@@ -3831,29 +3831,7 @@ if (!existingRestaurant) {
           throw new Error('Failed to create earning');
         }
       },
-    sendChatMessage: async (_, { orderId, messageInput }) => {
-        try {
-          // Create a new chat message document
-          const chatMessage = await ChatMessage.create({
-            orderId,
-            message: messageInput.message,
-            user: {
-              id: messageInput.user._id, // Use correct field names
-              name: messageInput.user.name, // Use correct field names
-            },
-          });
-  
-          // Return the success status, message, and created chat message data
-          return {
-            success: true,
-            message: 'Chat message sent successfully',
-            data: chatMessage
-          };
-        } catch (error) {
-          console.error('Error in sendChatMessage resolver:', error);
-          throw new Error('Failed to send chat message');
-        }
-      },
+
            /****************************************************************************************************************************
                                         RIDER MUTATIONS - END
     *****************************************************************************************************************************/
