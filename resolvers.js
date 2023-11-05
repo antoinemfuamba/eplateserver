@@ -2577,13 +2577,14 @@ restaurantinfo: async (_, { id }) => {
     try {
        // If id is not present, apply the logic for a restaurant
        if (!id) {
-        const { restaurantId } = context;
-        if (!restaurantId) {
+        const { userId } = context;
+        console.log("The Restaurant ID",userId)
+        if (!userId) {
           throw new Error('User ID not found in context');
         }
 
         // Toggle restaurant availability
-        const restaurant = await Restaurant.findById(restaurantId);
+        const restaurant = await Restaurant.findById(userId);
 
         if (!restaurant) {
           throw new Error('Restaurant not found');
