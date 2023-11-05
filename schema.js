@@ -506,6 +506,7 @@ input EmailConfigurationInput {
     isPickedUp: Boolean
     isRiderRinged: Boolean
     isRinged: Boolean
+    isRingMuted: Boolean
     preparationTime: String
   }
 
@@ -1135,6 +1136,7 @@ input OrderFoodInput {
   }
 
   type Mutation {
+    muteRing(orderId: String): Order
     acceptOrder(_id: String!, time: String): Order
     cancelOrder(_id: String!, reason: String!): Order
     orderPickedUp(_id: String!): Order
@@ -1178,7 +1180,7 @@ input OrderFoodInput {
     ): Order!
     deleteZone(id: String!): Zone
     updatePaymentStatus(id: String!, status: String!): Payment
-    toggleAvailability(_id: String): ToggleResult
+    toggleAvailability(id: String): ToggleResult
     assignRider(_id: String!, riderId: String!): Order
     updateOrderStatus(id: String!, status: String!, reason: String): Order
     updateStatus(id: String!, orderStatus: String!): Order

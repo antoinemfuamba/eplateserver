@@ -28,9 +28,15 @@ const orderSchema = new mongoose.Schema({
   },
   isRinged: {
     type: Boolean,
+    default:false
+  },
+  isRingMuted: {
+    type: Boolean,
+    default: false, // Initially, the ring is not muted
   },
   isRiderRinged: {
     type: Boolean,
+    default:false
   },
   isPickedUp: {
     type: Boolean,

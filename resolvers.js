@@ -37,6 +37,7 @@ const { withFilter } = require('graphql-subscriptions');
 const { PubSub } = require('graphql-subscriptions'); // Import PubSub
 // Create an instance of PubSub
 const pubsub = new PubSub();
+const { AuthenticationError } = require('apollo-server-express');
 const { ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
 const {assignZoneToRestaurant,getDistanceFromLatLonInMeters, generateUniqueCode, isLocationWithinZone} = require('./config/distance');
@@ -3962,7 +3963,37 @@ console.log(userId)
         throw new Error('Failed to save restaurant token');
       }
     },
+    muteRing: async (_, { orderId }, context) => {
+      // Check if the user is authenticated (you may need to adjust this based on your authentication logic)
+      if (!context.userId) {
+        throw new AuthenticationError('User not authenticated');
+      }
 
+      try {
+        // Find the order by orderId
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        // Check if the order belongs to the restaurant (you may need to adjust this based on your business logic)
+        if (order.restaurant.toString() !== context.restaurantId) {
+          throw new AuthenticationError('Access denied');
+        }
+
+        // Update the isRingMuted field
+        order.isRingMuted = true; // You want to mute the ring
+
+        // Save the updated order
+        const updatedOrder = await order.save();
+
+        return updatedOrder;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to mute the ring for the order');
+      }
+    },
            /****************************************************************************************************************************
                                         RESTAURANT MUTATIONS - END
     *****************************************************************************************************************************/
