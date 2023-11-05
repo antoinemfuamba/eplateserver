@@ -978,7 +978,7 @@ input OrderFoodInput {
 
   type AuthPayload {
     userId: ID!
-    restaurantId: ID!
+    restaurantId: ID
     token: String!
     tokenExpiration: Int
     name: String!
