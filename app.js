@@ -42,13 +42,18 @@ const server = new ApolloServer({
   uri: '/graphql',
   subscriptions: {
     onConnect: async (connectionParams, webSocket) => {
-            // Implement any logic for handling WebSocket connections here
-      // This function is called when a WebSocket connection is established
-
-
-      // If authentication fails or no authentication is required, you can return an empty object
-      return {pubsub};
-    },
+        if (connectionParams.authorization) {
+          const token = connectionParams.authorization.replace('Bearer ', '');
+          try {
+            const decodedToken = jwt.verify(token, JwtConfig.JWT_SECRET);
+            const userId = decodedToken.userId;
+            return { userId, pubsub };
+          } catch (error) {
+            throw new Error('Invalid token');
+          }
+        }
+        throw new Error('Authorization token not provided');
+      },
   },
   context: ({ req }) => {
     // Get the authorization header from the request

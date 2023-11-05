@@ -3850,7 +3850,7 @@ console.log(user);
       throw new ApolloError('Invalid password');
     }
           // Generate a new token
-          const token = jwt.sign({ restaurantId: user._id.toString() }, JwtConfig.JWT_SECRET);
+          const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET);
           // Update the user's token in the database
           user.token = token;
           // user.notificationToken = notificationToken; 
@@ -3858,7 +3858,7 @@ console.log(user);
 
           // Return the user and token
           return {
-            restaurantId: user._id.toString(),
+            userId: user._id.toString(),
             token,
             
           };
