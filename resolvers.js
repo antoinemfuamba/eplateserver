@@ -2577,14 +2577,14 @@ restaurantinfo: async (_, { id }) => {
     try {
        // If id is not present, apply the logic for a restaurant
        if (!id) {
-        const { userId } = context;
-        console.log("The Restaurant ID",userId)
+        const { restaurantId } = context;
+        console.log("The Restaurant ID",restaurantId)
         if (!userId) {
           throw new Error('User ID not found in context');
         }
 
         // Toggle restaurant availability
-        const restaurant = await Restaurant.findById(userId);
+        const restaurant = await Restaurant.findById(restaurantId);
 
         if (!restaurant) {
           throw new Error('Restaurant not found');
@@ -3850,7 +3850,7 @@ console.log(user);
       throw new ApolloError('Invalid password');
     }
           // Generate a new token
-          const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET);
+          const token = jwt.sign({ restaurantId: user._id.toString() }, JwtConfig.JWT_SECRET);
           // Update the user's token in the database
           user.token = token;
           // user.notificationToken = notificationToken; 
@@ -3858,7 +3858,7 @@ console.log(user);
 
           // Return the user and token
           return {
-            userId: user._id.toString(),
+            restaurantId: user._id.toString(),
             token,
             
           };

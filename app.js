@@ -67,9 +67,9 @@ const server = new ApolloServer({
         // Verify and decode the token to get the userId
         const decodedToken = jwt.verify(token, JwtConfig.JWT_SECRET);
         const userId = decodedToken.userId;
-
+        const restaurantId = decodedToken.restaurantId;
         // Add the userId to the context object
-        return { userId, pubsub };
+        return { restaurantId, userId, pubsub };
       } catch (error) {
         // Token verification failed, handle accordingly (e.g., throw an error)
         throw new Error('Invalid token');
