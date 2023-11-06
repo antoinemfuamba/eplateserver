@@ -1032,6 +1032,8 @@ input OrderFoodInput {
   type OrderStatusChangedSubscriptionPayload {
     userId: String!
     orderStatus: String
+    origin: String!
+    order: Order!
   }
   
   type PlaceOrderSubscriptionPayload {

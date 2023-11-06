@@ -3897,9 +3897,18 @@ if (!existingRestaurant) {
         }
 
         order.acceptedAt = new Date();
+        
         // Save the updated order
         const updatedOrder = await order.save();
-
+    // Now, publish the order status change
+    pubsub.publish('ORDER_STATUS_CHANGED', {
+      orderStatusChanged: {
+        userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
+        origin: 'order_accepted',
+        orderStatus: 'ACCEPTED',
+        order: updatedOrder,
+      },
+    });
         return updatedOrder;
       } catch (error) {
         console.error(error);
@@ -3924,7 +3933,15 @@ if (!existingRestaurant) {
 
         // Save the updated order
         const updatedOrder = await order.save();
-
+    // Now, publish the order status change
+    pubsub.publish('ORDER_STATUS_CHANGED', {
+      orderStatusChanged: {
+        userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
+        origin: 'order_cancelled',
+        orderStatus: 'CANCELLED',
+        order: updatedOrder,
+      },
+    });
         return updatedOrder;
       } catch (error) {
         console.error(error);
@@ -3947,7 +3964,15 @@ if (!existingRestaurant) {
         order.pickedAt = new Date();
         // Save the updated order
         const updatedOrder = await order.save();
-
+    // Now, publish the order status change
+    pubsub.publish('ORDER_STATUS_CHANGED', {
+      orderStatusChanged: {
+        userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
+        origin: 'order_picked',
+        orderStatus: 'PICKED',
+        order: updatedOrder,
+      },
+    });
         return updatedOrder;
       } catch (error) {
         console.error(error);
