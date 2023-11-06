@@ -88,13 +88,18 @@ server.start().then(() => {
   });
   const httpServer = createServer(app);
 
+  // Start the server
+  httpServer.listen(port, () => {
+    console.log('Server started at port:' + port);
+  });
+
   /*// Start the server
   app.listen(port, () => {
     console.log('Server started at port:' + port);
   });
   // Start the server
   const httpServer = createServer(app);
-
+*/
   // Start WebSocket server for subscriptions
   SubscriptionServer.create(
     {
@@ -106,31 +111,8 @@ server.start().then(() => {
       server: httpServer,
       path: server.graphqlPath,
     }
-  );*/
-  // WebSocket server for subscriptions
-   const wsServer = new ws.Server({
-   server: httpServer,
-   path: '/graphql'
-  });
+  );
 
-  wsServer.on('connection', (socket, request) => {
-
-    new SubscriptionServer(
-      {
-        schema: server.schema,
-        execute,
-        subscribe,
-      },
-      {
-        server: socket,
-        
-      }
-    );
-  });
-
-  httpServer.listen(port, () => {
-    console.log('Server started at port:' + port);
-  });
 }).catch((error) => {
   console.error('Failed to start ApolloServer:', error);
 });
