@@ -88,11 +88,6 @@ server.start().then(() => {
   });
   const httpServer = createServer(app);
 
-  // Start the server
-  httpServer.listen(port, () => {
-    console.log('Server started at port:' + port);
-  });
-
   /*// Start the server
   app.listen(port, () => {
     console.log('Server started at port:' + port);
@@ -103,7 +98,7 @@ server.start().then(() => {
   // Start WebSocket server for subscriptions
   SubscriptionServer.create(
     {
-      schema: server.schema,
+      schema: typeDefs,
       execute,
       subscribe,
     },
@@ -113,6 +108,9 @@ server.start().then(() => {
     }
   );
 
+  httpServer.listen(port, () => {
+    console.log('Server started at port:' + port);
+  });
 }).catch((error) => {
   console.error('Failed to start ApolloServer:', error);
 });
