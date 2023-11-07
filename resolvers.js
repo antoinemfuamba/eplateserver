@@ -1228,7 +1228,7 @@ restaurantinfo: async (_, { id }) => {
         chat: async (_, { order }) => {
         try {
           // Logic to fetch chat messages based on the provided order
-
+console.log(order);
           // Example code to fetch chat messages from a database
           const messages = await ChatMessage.find({ order });
 
