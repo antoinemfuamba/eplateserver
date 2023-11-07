@@ -1290,7 +1290,7 @@ console.log(order);
             // Extract location coordinates from the zone
             const coordinates = rider.zone.location.coordinates;
             rider.coordinates = coordinates;
-    
+    console.log("The Deets:",rider.coordinates);
             return rider;
           } catch (error) {
             console.error('Error fetching rider:', error);
