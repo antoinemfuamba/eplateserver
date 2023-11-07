@@ -1275,7 +1275,7 @@ console.log(order);
               path: 'zone',
               populate: {
                 path: 'location',
-                model: Location,
+                model: Locat,
               },
             });
     
@@ -2440,7 +2440,7 @@ console.log(order);
       const { _id, ...riderData } = riderInput;
   
  // Generate a new token
- const token = jwt.sign({ userId: _id }, JwtConfig.JWT_SECRET, { expiresIn: '2h' });
+ const token = jwt.sign({ userId: _id }, JwtConfig.JWT_SECRET);
 
  // Add the token and userId to the riderData object
  riderData.token = token;

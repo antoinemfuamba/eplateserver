@@ -50,6 +50,11 @@ const riderSchema = new mongoose.Schema({
     type: String,
  
   },
+  location: 
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'locat',
+  },
   accountNumber: {
     type: String,
   },
