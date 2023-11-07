@@ -1275,7 +1275,7 @@ console.log(order);
               path: 'zone',
               populate: {
                 path: 'location',
-                model: Location,
+                model: Locat,
               },
             });
     
