@@ -3109,6 +3109,8 @@ if (!existingRestaurant) {
         // Assuming you have a ChatMessage and Order model
         const order = await Order.findById(orderId);
         if (!order) {
+          console.error("Order not found with orderId:", orderId);
+
           throw new Error("Order not found");
         }
     
@@ -3117,11 +3119,14 @@ if (!existingRestaurant) {
           user: userId, // Assuming you have the authenticated user in context
           createdAt: new Date(),
         });
-    
+        console.log("Adding chat message to order with orderId:", orderId);
+
         order.chatMessages.push(chatMessage._id);
         await chatMessage.save();
         await order.save();
         // Publish the chat message 
+        console.log("Chat message sent successfully for orderId:", orderId);
+
         pubsub.publish('CHAT_MESSAGE_SENT', {
           subscriptionNewMessage: {
             orderId,
