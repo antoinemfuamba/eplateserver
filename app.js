@@ -22,7 +22,8 @@ const jwt = require('jsonwebtoken');
 const allowedOrigins = [
 'http://localhost:3000','https://drive.google.com/file/d/1HUcpbIG78DdoMKHtlVefjAZrWRRwwuA8/view?usp=sharing',
 'http://localhost:3001','http://localhost:5000','ws://localhost:5000','https://admin.kizuri.co.za','https://iplate.kizuri.co.za','wss://admin.kizuri.co.za','wss://iplate.kizuri.co.za',
-'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png'
+'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png',  'https://kizuri-production.up.railway.app/',
+'wss://kizuri-production.up.railway.app/',
 ];
 
 // Enable CORS for all routes
