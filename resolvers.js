@@ -3122,7 +3122,7 @@ if (!existingRestaurant) {
         const chatMessage = new ChatMessage({
           message: messageInput.message,
           user: {
-            id: userId, // Set the authenticated user's ID
+            _id: userId, // Set the authenticated user's ID
             name: user.name, // Set the user's name from the context
           },
           orderId: orderId, // Set the order's ID

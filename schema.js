@@ -829,7 +829,7 @@ scalar minute
   }
 
   input UserInput {
-    id:ID
+    _id:ID
     name: String
     email: String
     password: String
