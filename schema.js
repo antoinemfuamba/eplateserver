@@ -204,8 +204,7 @@ input EmailConfigurationInput {
   }
   
   input ChatMessageInput {
-    message: String!
-    user: UserInput!
+    messageInput: String!
   }
 
   type SendOtpResponse {
