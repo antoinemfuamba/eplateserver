@@ -3105,21 +3105,23 @@ if (!existingRestaurant) {
 
     sendChatMessage: async (_, { orderId, messageInput }, context) => {
       try {
+        const {userId} = context;
         // Assuming you have a ChatMessage and Order model
         const order = await Order.findById(orderId);
         if (!order) {
           throw new Error("Order not found");
         }
     
-        const chatMessage = {
+        const chatMessage = new ChatMessage({
           message: messageInput.message,
-          user: context.userId, // Assuming you have the authenticated user in context
+          user: userId, // Assuming you have the authenticated user in context
           createdAt: new Date(),
-        };
+        });
     
-        order.chatMessages.push(chatMessage);
+        order.chatMessages.push(chatMessage._id);
+        await chatMessage.save();
         await order.save();
-        // Publish the chat message
+        // Publish the chat message 
         pubsub.publish('CHAT_MESSAGE_SENT', {
           subscriptionNewMessage: {
             orderId,

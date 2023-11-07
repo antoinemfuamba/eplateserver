@@ -191,6 +191,7 @@ input EmailConfigurationInput {
 
   type ChatMessage {
     _id: ID!
+    orderId: ID!
     message: String!
     user: User!
     createdAt: String!
@@ -1238,7 +1239,7 @@ input OrderFoodInput {
     updateRiderLocation(latitude: String!, longitude: String!): Rider
     createWithdrawRequest(amount: Float!): WithdrawRequest
     createEarning(earningsInput: EarningsInput): Earning
-    sendChatMessage(orderId: ID!, message: ChatMessageInput!): SendChatMessageResponse
+    sendChatMessage(orderId: ID!, messageInput: ChatMessageInput!): SendChatMessageResponse
     riderLogin(username: String, password: String, notificationToken: String): AuthPayload
     updateOrderStatusRider(id: String!, status: String!): Order
     saveNotificationTokenWeb(token: String!): NotificationTokenResponse!

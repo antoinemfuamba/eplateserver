@@ -104,7 +104,7 @@ server.start().then(() => {
     },
     {
       server: httpServer,
-      path: server.graphqlPath,
+      path: '/graphql',
     }
   );
 

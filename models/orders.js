@@ -1,4 +1,6 @@
 const  mongoose  = require('mongoose');
+const chatMessageSchema = require('./chatmessage'); // Import the chatMessageSchema from the chatMessage.js file
+
 // Define the Order schema
 const orderSchema = new mongoose.Schema({
   day: {
@@ -105,7 +107,12 @@ const orderSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.Mixed, // Allow mixed types (strings, objects, etc.)
       required: true,
     },
-
+    chatMessages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'ChatMessage',
+      },
+    ],
     deliveryCharges: {
       type: Number,
     },
