@@ -204,7 +204,7 @@ input EmailConfigurationInput {
   }
   
   input ChatMessageInput {
-    messageInput: MessageInput!
+    message: MessageInput!
   }
   input MessageInput {
     message: String!
