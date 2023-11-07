@@ -1238,7 +1238,7 @@ restaurantinfo: async (_, { id }) => {
           throw new Error('Failed to fetch chat messages');
         }
         },
-        rider: async (_, args, context) => {
+       /* rider: async (_, args, context) => {
 
         try { 
           const { userId } = context;
@@ -1267,8 +1267,37 @@ restaurantinfo: async (_, { id }) => {
           console.error(error);
           throw new Error('Failed to fetch rider');
         }
-        },    
-      /****************************************************************************************************************************
+        },*/    
+      
+        rider: async (_, { id }, context) => {
+          try {
+            const rider = await Rider.findById(id).populate({
+              path: 'zone',
+              populate: {
+                path: 'location',
+                model: Location,
+              },
+            });
+    
+            if (!rider) {
+              throw new Error('Rider not found');
+            }
+    
+            if (!rider.zone) {
+              throw new Error('Rider zone not found');
+            }
+    
+            // Extract location coordinates from the zone
+            const coordinates = rider.zone.location.coordinates;
+            rider.coordinates = coordinates;
+    
+            return rider;
+          } catch (error) {
+            console.error('Error fetching rider:', error);
+            throw new Error('Failed to fetch rider');
+          }
+        },
+        /****************************************************************************************************************************
                                         RIDER QUERIES - END
     *****************************************************************************************************************************/
 
