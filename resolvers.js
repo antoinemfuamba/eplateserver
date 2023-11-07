@@ -3113,12 +3113,17 @@ if (!existingRestaurant) {
 
           throw new Error("Order not found");
         }
-    
+        const user = await User.findById(userId);
+        if (!user) {
+          console.error("User not found with usererId:", userId);
+
+          throw new Error("User not found");
+        }
         const chatMessage = new ChatMessage({
           message: messageInput.message,
           user: {
             id: userId, // Set the authenticated user's ID
-            name: context.user.name, // Set the user's name from the context
+            name: user.name, // Set the user's name from the context
           },
           orderId: orderId, // Set the order's ID
           createdAt: new Date(),
