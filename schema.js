@@ -670,7 +670,7 @@ input EmailConfigurationInput {
     currentWalletAmount: Float
     totalWalletAmount: Float
     withdrawnWalletAmount: Float
-    location: Location!
+    location: Locat!
   }
   
   input RiderInput {
