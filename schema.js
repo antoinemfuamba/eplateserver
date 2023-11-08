@@ -656,7 +656,7 @@ input EmailConfigurationInput {
   }
   type Rider {
     _id: ID!
-    userId: String
+    riderId: String
     name: String!
     email: String
     token: String

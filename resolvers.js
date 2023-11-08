@@ -1283,16 +1283,16 @@ console.log(order);
                 },
               });
               console.log("Fetching rider by ID:", id);
-            } else if (context.userId) {
+            } else if (context.riderId) {
               // If no ID is provided, but a userId is present in the context, fetch the rider for the context user
-              rider = await Rider.findOne({ userId: context.userId }).populate({
+              rider = await Rider.findOne({ riderId: context.riderId }).populate({
                 path: 'zone',
                 populate: {
                   path: 'location',
                   model: Location,
                 },
               });
-              console.log("Fetching rider for context userId:", context.userId);
+              console.log("Fetching rider for context userId:", context.riderId);
             } else {
               // Handle the case where neither ID nor context userId is provided
               throw new Error('No ID or context user ID provided');
@@ -2461,21 +2461,21 @@ console.log(order);
       const { _id, ...riderData } = riderInput;
   
  // Generate a new token
- const token = jwt.sign({ userId: _id }, JwtConfig.JWT_SECRET);
+ const token = jwt.sign({ riderId: _id }, JwtConfig.JWT_SECRET);
 
  // Add the token and userId to the riderData object
  riderData.token = token;
- riderData.userId = _id;
+ riderData.riderId = _id;
 
       // Create the Rider document
       const newRider = new Rider(riderData);
   
       const savedRider = await newRider.save();
        // Assign the correct userId value
-    savedRider.userId = savedRider._id.toString();
+    savedRider.riderId = savedRider._id.toString();
 
         // Update the rider document in the database with the correct userId
-        await Rider.findByIdAndUpdate(savedRider._id, { userId: savedRider.userId });
+        await Rider.findByIdAndUpdate(savedRider._id, { riderId: savedRider.riderId });
 
       console.log('Rider document created:', savedRider);
       return savedRider;
@@ -3155,43 +3155,51 @@ if (!existingRestaurant) {
 
     sendChatMessage: async (_, { orderId, messageInput }, context) => {
       try {
-        const {userId} = context;
-        // Assuming you have a ChatMessage and Order model
+        const { userId, riderId } = context;
+        let sender; // Store the user or rider based on the context
+    
+        if (userId) {
+          sender = await User.findById(userId);
+        } else if (riderId) {
+          sender = await Rider.findById(riderId);
+        }
+    
+        if (!sender) {
+          console.error("Sender not found with userId or riderId:", userId || riderId);
+          throw new Error("Sender not found");
+        }
+    
         const order = await Order.findById(orderId);
         if (!order) {
           console.error("Order not found with orderId:", orderId);
-
           throw new Error("Order not found");
         }
-        const user = await User.findById(userId);
-        if (!user) {
-          console.error("User not found with usererId:", userId);
-
-          throw new Error("User not found");
-        }
+    
         const chatMessage = new ChatMessage({
           message: messageInput.message,
           user: {
-            _id: userId, // Set the authenticated user's ID
-            name: user.name, // Set the user's name from the context
+            _id: userId || riderId, // Set the sender's ID
+            name: sender.name, // Set the sender's name from the context
           },
-          orderId: orderId, // Set the order's ID
+          orderId: orderId,
           createdAt: new Date(),
         });
+    
         console.log("Adding chat message to order with orderId:", orderId);
-
+    
         order.chatMessages.push(chatMessage._id);
         await chatMessage.save();
         await order.save();
-        // Publish the chat message 
+    
         console.log("Chat message sent successfully for orderId:", orderId);
-
+    
         pubsub.publish('CHAT_MESSAGE_SENT', {
           subscriptionNewMessage: {
             orderId,
             message: chatMessage,
           },
         });
+    
         return {
           success: true,
           message: "Message sent successfully",
@@ -3202,6 +3210,7 @@ if (!existingRestaurant) {
         throw new Error("Failed to send chat message");
       }
     },
+    
     resetPassword : async (_, { password, email }) => {
       try {
         // Assuming you have a User model representing the user accounts
