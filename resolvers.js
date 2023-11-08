@@ -3855,16 +3855,30 @@ if (!existingRestaurant) {
         }
       }, 
       //DONE
-    updateRiderLocation: async (_, { latitude, longitude }) => {
-      try {
-        // Assuming you have a method in your Rider model to update the location
-        const rider = await Rider.findOneAndUpdate({}, { latitude, longitude }, { new: true });
-        return rider;
-      } catch (error) {
-        console.error(error);
-        throw new Error('Failed to update rider location');
-      }
-    },
+      updateRiderLocation: async (_, { latitude, longitude }, context) => {
+        try {
+          const { userId } = context;
+      
+          // Find the rider associated with the authenticated user (userId)
+          const rider = await Rider.findOne({ userId });
+      
+          if (!rider) {
+            throw new Error('Rider not found for the authenticated user');
+          }
+      
+          // Update the rider's location
+          rider.location = { coordinates: [longitude, latitude] };
+      
+          // Save the updated rider object
+          const updatedRider = await rider.save();
+      
+          return updatedRider;
+        } catch (error) {
+          console.error(error);
+          throw new Error('Failed to update rider location');
+        }
+      },
+      
 
     createWithdrawRequest: async (_, { amount }, context) => {
      try{
