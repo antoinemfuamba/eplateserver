@@ -3877,6 +3877,9 @@ if (!existingRestaurant) {
             coordinates: [longitude, latitude],
           });
 
+      // Save the new location
+      await newLocation.save();
+
           // Assign the new location to the rider
           rider.location = newLocation;
         }
