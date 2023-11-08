@@ -3866,12 +3866,24 @@ if (!existingRestaurant) {
             throw new Error('Rider not found for the authenticated user');
           }
       
-          // Update the rider's location
-          rider.location = { coordinates: [longitude, latitude] };
-      
-          // Save the updated rider object
-          const updatedRider = await rider.save();
-      
+        // Check if the rider already has a location
+        if (rider.location) {
+          // Update the existing location
+          rider.location.coordinates = [longitude, latitude];
+        } else {
+          // Create a new location using the Locat model
+          const newLocation = new Locat({
+            type: 'Point',
+            coordinates: [longitude, latitude],
+          });
+
+          // Assign the new location to the rider
+          rider.location = newLocation;
+        }
+
+        // Save the updated rider object
+        const updatedRider = await rider.save();
+
           return updatedRider;
         } catch (error) {
           console.error(error);
