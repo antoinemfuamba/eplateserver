@@ -983,7 +983,7 @@ input OrderFoodInput {
   type AuthPayload {
     userId: ID!
     restaurantId: ID!
-    riderId: ID!
+    riderId: String
     token: String!
     tokenExpiration: Int
     name: String!
