@@ -3157,13 +3157,16 @@ if (!existingRestaurant) {
       try {
         const { userId } = context;
         let sender; // Store the user or rider based on the context
-    
+
+        const user = await User.findById(userId);
+        const rider = await Rider.findById(userId);
         
-          sender = await User.findById(userId);
-          if (!sender) {
-            sender = await Rider.findById(userId);
+        if (user) {
+          sender = user;
+        } else if (rider) {
+          sender = rider;
         } else {
-          throw new Error("Sender not found for ID:", userId);
+          throw new Error("Sender not found for ID: " + userId);
         }
     
     
