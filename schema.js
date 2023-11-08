@@ -656,7 +656,7 @@ input EmailConfigurationInput {
   }
   type Rider {
     _id: ID!
-    riderId: String
+    userId: String
     name: String!
     email: String
     token: String
@@ -983,7 +983,6 @@ input OrderFoodInput {
   type AuthPayload {
     userId: ID!
     restaurantId: ID!
-    riderId: String
     token: String!
     tokenExpiration: Int
     name: String!

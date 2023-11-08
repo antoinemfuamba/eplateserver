@@ -1142,10 +1142,10 @@ restaurantinfo: async (_, { id }) => {
         riderOrders: async (_, args, context) => {
           try {
             // Extract the userId from the context
-            const { riderId } = context;
+            const { userId } = context;
         
             // Find the rider by userId
-            const rider = await Rider.findOne({ riderId }).populate('zone');
+            const rider = await Rider.findOne({ userId }).populate('zone');
         
             if (!rider) {
               throw new Error('Rider not found');
@@ -1343,7 +1343,7 @@ console.log(order);
         );
 
         // Fetch rider data and update wallet amount
-        const rider = await Rider.findById(updatedWithdrawRequest.riderId);
+        const rider = await Rider.findById(updatedWithdrawRequest.userId);
         rider.currentWalletAmount -= updatedWithdrawRequest.amount;
         await rider.save();
 
@@ -2441,21 +2441,21 @@ console.log(order);
       const { _id, ...riderData } = riderInput;
   
  // Generate a new token
- const token = jwt.sign({ riderId: _id }, JwtConfig.JWT_SECRET);
+ const token = jwt.sign({ userId: _id }, JwtConfig.JWT_SECRET);
 
  // Add the token and userId to the riderData object
  riderData.token = token;
- riderData.riderId = _id;
+ riderData.userId = _id;
 
       // Create the Rider document
       const newRider = new Rider(riderData);
   
       const savedRider = await newRider.save();
        // Assign the correct userId value
-    savedRider.riderId = savedRider._id.toString();
+    savedRider.userId = savedRider._id.toString();
 
         // Update the rider document in the database with the correct userId
-        await Rider.findByIdAndUpdate(savedRider._id, { riderId: savedRider.riderId });
+        await Rider.findByIdAndUpdate(savedRider._id, { userId: savedRider.userId });
 
       console.log('Rider document created:', savedRider);
       return savedRider;
@@ -3135,21 +3135,17 @@ if (!existingRestaurant) {
 
     sendChatMessage: async (_, { orderId, messageInput }, context) => {
       try {
-        const { userId, riderId } = context;
+        const { userId } = context;
         let sender; // Store the user or rider based on the context
     
-        if (userId) {
+        
           sender = await User.findById(userId);
-        } else if (riderId) {
-          sender = await Rider.findById(riderId);
+          if (!sender) {
+            sender = await Rider.findById(userId);
+        } else {
+          throw new Error("Sender not found for ID:", userId);
         }
     
-        if (!sender) {
-          console.error("Sender not found with userId or riderId:", userId);
-          console.error("Sender not found with userId or riderId:", riderId);
-
-          throw new Error("Sender not found");
-        }
     
         const order = await Order.findById(orderId);
         if (!order) {
@@ -3160,7 +3156,7 @@ if (!existingRestaurant) {
         const chatMessage = new ChatMessage({
           message: messageInput.message,
           user: {
-            _id: userId || riderId, // Set the sender's ID
+            _id: userId , // Set the sender's ID
             name: sender.name, // Set the sender's name from the context
           },
           orderId: orderId,
@@ -3736,14 +3732,14 @@ if (!existingRestaurant) {
       throw new ApolloError('Invalid password');
     }
           // Generate a new token
-          const token = jwt.sign({ riderId: user._id.toString() }, JwtConfig.JWT_SECRET);
+          const token = jwt.sign({ userId: user._id.toString() }, JwtConfig.JWT_SECRET);
           // Update the user's token in the database
           user.token = token;
           user.notificationToken = notificationToken; 
           await user.save();
           return {
             user,
-            riderId: user._id.toString(),
+            userId: user._id.toString(),
             token,
             notificationToken
           };

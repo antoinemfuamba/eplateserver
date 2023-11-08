@@ -24,7 +24,7 @@ const riderSchema = new mongoose.Schema({
   notificationToken: {
     type: String,
   },
-  riderId: {
+  userId: {
     type: String,
   
   },
