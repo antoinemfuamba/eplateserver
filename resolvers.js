@@ -1278,7 +1278,8 @@ console.log(order);
                 model: Location,
               },
             });
-    
+            console.log("The rider id:",id);
+
             if (!rider) {
               throw new Error('Rider not found');
             }
