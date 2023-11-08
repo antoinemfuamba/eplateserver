@@ -1142,10 +1142,10 @@ restaurantinfo: async (_, { id }) => {
         riderOrders: async (_, args, context) => {
           try {
             // Extract the userId from the context
-            const { userId } = context;
+            const { riderId } = context;
         
             // Find the rider by userId
-            const rider = await Rider.findOne({ userId }).populate('zone');
+            const rider = await Rider.findOne({ riderId }).populate('zone');
         
             if (!rider) {
               throw new Error('Rider not found');
