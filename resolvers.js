@@ -3165,7 +3165,9 @@ if (!existingRestaurant) {
         }
     
         if (!sender) {
-          console.error("Sender not found with userId or riderId:", userId || riderId);
+          console.error("Sender not found with userId or riderId:", userId);
+          console.error("Sender not found with userId or riderId:", riderId);
+
           throw new Error("Sender not found");
         }
     
