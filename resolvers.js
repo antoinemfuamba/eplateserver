@@ -1275,14 +1275,15 @@ console.log(order);
         
             if (id) {
               // If an ID is provided, fetch the rider using that ID
-              rider = await Rider.findById(id).populate({
-                path: 'zone',
-                populate: {
-                  path: 'location',
-                  model: Location,
-                },
-              });
+              rider = await Rider.findById(id).populate('location');
+              // Extract location coordinates from the rider
+              const coordinates = rider.location ? rider.location.coordinates : null;
               console.log("Fetching rider by ID:", id);
+
+              return {
+                _id: rider._id,
+                location: { coordinates },
+              };
             } else if (context.userId) {
               // If no ID is provided, but a userId is present in the context, fetch the rider for the context user
               rider = await Rider.findOne({ userId: context.userId }).populate({
@@ -1305,12 +1306,7 @@ console.log(order);
             if (!rider.zone) {
               throw new Error('Rider zone not found');
             }
-        
-            // Extract location coordinates from the zone
-            const coordinates = rider.zone.location.coordinates;
-            rider.coordinates = coordinates;
-            console.log("The Deets:", rider.coordinates);
-        
+
             return rider;
           } catch (error) {
             console.error('Error fetching rider:', error);
