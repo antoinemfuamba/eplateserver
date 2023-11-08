@@ -1271,33 +1271,53 @@ console.log(order);
       
         rider: async (_, { id }, context) => {
           try {
-            const rider = await Rider.findById(id).populate({
-              path: 'zone',
-              populate: {
-                path: 'location',
-                model: Location,
-              },
-            });
-            console.log("The rider id:",id);
-
+            let rider;
+        
+            if (id) {
+              // If an ID is provided, fetch the rider using that ID
+              rider = await Rider.findById(id).populate({
+                path: 'zone',
+                populate: {
+                  path: 'location',
+                  model: Location,
+                },
+              });
+              console.log("Fetching rider by ID:", id);
+            } else if (context.userId) {
+              // If no ID is provided, but a userId is present in the context, fetch the rider for the context user
+              rider = await Rider.findOne({ userId: context.userId }).populate({
+                path: 'zone',
+                populate: {
+                  path: 'location',
+                  model: Location,
+                },
+              });
+              console.log("Fetching rider for context userId:", context.userId);
+            } else {
+              // Handle the case where neither ID nor context userId is provided
+              throw new Error('No ID or context user ID provided');
+            }
+        
             if (!rider) {
               throw new Error('Rider not found');
             }
-    
+        
             if (!rider.zone) {
               throw new Error('Rider zone not found');
             }
-    
+        
             // Extract location coordinates from the zone
             const coordinates = rider.zone.location.coordinates;
             rider.coordinates = coordinates;
-    console.log("The Deets:",rider.coordinates);
+            console.log("The Deets:", rider.coordinates);
+        
             return rider;
           } catch (error) {
             console.error('Error fetching rider:', error);
             throw new Error('Failed to fetch rider');
           }
         },
+        
         /****************************************************************************************************************************
                                         RIDER QUERIES - END
     *****************************************************************************************************************************/
