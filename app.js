@@ -5,6 +5,7 @@ const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { ApolloServer, gql } = require('apollo-server-express');
 const db = require('./models/db'); // Import the db connection object
 const { PubSub } = require('graphql-subscriptions');
+const { makeExecutableSchema } = require('graphql-tools');
 const pubsub = new PubSub();
 const typeDefs = require('./schema');
 const resolvers = require('./resolvers');
@@ -17,6 +18,7 @@ const port = process.env.PORT || 4000;
 require('dotenv').config();
 const JwtConfig = require('./config/config.json').development;
 const jwt = require('jsonwebtoken');
+const executableSchema = makeExecutableSchema({ typeDefs, resolvers });
 
 // Define an array of allowed origins
 const allowedOrigins = [
@@ -85,7 +87,7 @@ server.start().then(() => {
   // Start WebSocket server for subscriptions
   SubscriptionServer.create(
     {
-      schema: typeDefs,
+      schema: executableSchema,
       execute,
       subscribe,
     },
