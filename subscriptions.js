@@ -8,7 +8,9 @@ const subscriptionResolvers = {
           (_, { id }, context) => {
             // Your logic to validate the subscription and ensure the user has the necessary permissions
             // For example, you might check if the user is authenticated and has access to the specified order (id)
-            if (!context.userId) {
+            const {userId} = context;
+
+            if (!userId) {
               throw new Error('Unauthorized');
             }
   
@@ -35,7 +37,9 @@ const subscriptionResolvers = {
             // Your logic to validate the subscription and ensure the user has the necessary permissions
             // For example, you might check if the user is authenticated and has access to the specified restaurant
             // Also, you can create a pubsub channel specific to the restaurant, for example: `subscribePlaceOrder_${restaurant}`
-            if (!context.userId) {
+            const {userId} = context;
+
+            if (!userId) {
               throw new Error('Unauthorized');
             }
             
@@ -53,7 +57,9 @@ const subscriptionResolvers = {
           (_, { riderId }, context) => {
             // Your logic to validate the subscription and ensure the user has the necessary permissions
             // For example, you might check if the user is authenticated and has access to the specified rider (riderId)
-            if (!context.userId) {
+            const {userId} = context;
+
+            if (!userId) {
               throw new Error('Unauthorized');
             }
   
