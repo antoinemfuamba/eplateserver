@@ -90,7 +90,7 @@ server.start().then(() => {
       schema: executableSchema,
       execute,
       subscribe,
-      onConnect: async (connectionParams, webSocket) => {
+      /*onConnect: async (connectionParams, webSocket) => {
       if (connectionParams.authorization) {
         const token = connectionParams.authorization.replace('Bearer ', '');
         try {
@@ -102,7 +102,7 @@ server.start().then(() => {
         }
       }
       throw new Error('Authorization token not provided');
-    },
+    },*/
   },
     {
       server: httpServer,
