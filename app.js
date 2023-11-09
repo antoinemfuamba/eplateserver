@@ -85,7 +85,7 @@ server.start().then(() => {
   // Start WebSocket server for subscriptions
   SubscriptionServer.create(
     {
-      schema: server.schema,
+      schema: typeDefs,
       execute,
       subscribe,
     },
