@@ -1232,7 +1232,27 @@ console.log(order);
           // Example code to fetch chat messages from a database
           const messages = await ChatMessage.find({ order });
 
-          return messages;
+        // Logic to fetch chat messages based on the provided order and user
+        const messages = await ChatMessage.find({
+          orderId: order,
+          $or: [
+            { riderId: context.userId },
+            { userId: context.userId },
+          ],
+        });
+
+        // Transform the data to match the expected shape in your GraphQL schema
+        const formattedMessages = messages.map(message => ({
+          _id: message._id,
+          message: message.message,
+          user: {
+            _id: message.user._id,
+            name: message.user.name,
+          },
+          createdAt: message.createdAt,
+        }));
+
+        return formattedMessages;
         } catch (error) {
           console.error(error);
           throw new Error('Failed to fetch chat messages');
