@@ -79,6 +79,7 @@ const subscriptionResolvers = {
             // Your logic to validate the subscription and ensure the user has the necessary permissions
             // For example, you might check if the user is authenticated and has access to the specified order
             const {userId} = context;
+            console.log("The UserId in the subscriptions:",userId);
             if (!userId) {
               throw new Error('Unauthorized');
             }
