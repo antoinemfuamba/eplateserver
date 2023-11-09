@@ -1227,6 +1227,11 @@ restaurantinfo: async (_, { id }) => {
         },
         chat: async (_, { order }) => {
         try {
+              // Ensure that the user is authenticated
+    if (!context.userId) {
+      throw new Error('Unauthorized');
+    }
+
           // Logic to fetch chat messages based on the provided order
 console.log(order);
 
@@ -1254,7 +1259,14 @@ console.log(order);
         return formattedMessages;
         } catch (error) {
           console.error(error);
-          throw new Error('Failed to fetch chat messages');
+          throw new Error('Failed to fetch chat messages',error);
+          
+    // Return a more specific error message based on the encountered error
+    if (error.message === 'Unauthorized') {
+      throw new Error('Unauthorized access. Please log in.');
+    } else {
+      throw new Error('Failed to fetch chat messages. Please try again later.');
+    }
         }
         },
        /* rider: async (_, args, context) => {
