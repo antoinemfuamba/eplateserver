@@ -1225,7 +1225,7 @@ restaurantinfo: async (_, { id }) => {
           throw new Error('Failed to fetch rider withdraw requests');
         }
         },
-        chat: async (_, { order }) => {
+        chat: async (_, { order }, context) => {
         try {
               // Ensure that the user is authenticated
     if (!context.userId) {
