@@ -3193,7 +3193,9 @@ if (!existingRestaurant) {
         pubsub.publish('CHAT_MESSAGE_SENT', {
           subscriptionNewMessage: {
             orderId,
-            message: chatMessage,
+            message: chatMessage.message,  // Send the message text
+            user: chatMessage.user,  // Send the user details
+            createdAt: chatMessage.createdAt,  // Send the timestamp
           },
         });
     
