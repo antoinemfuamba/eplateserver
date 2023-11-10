@@ -61,7 +61,7 @@ const orderSchema = new mongoose.Schema({
     },
     chatMessages: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:'ChatMessage',
+      ref:'ChatMessages',
     },
     restaurant:{
       type: mongoose.Schema.Types.ObjectId,
