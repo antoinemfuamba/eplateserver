@@ -3226,7 +3226,7 @@ if (!existingRestaurant) {
           
             orderId,
             message: chatMessage.message,  // Send the message text
-            user: chatMessage.user,  // Send the user details
+            user: chatMessage.user.name,  // Send the user details
             createdAt: chatMessage.createdAt,  // Send the timestamp
           
         });
