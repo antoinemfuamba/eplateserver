@@ -4231,7 +4231,7 @@ if (!existingRestaurant) {
         throw new Error('Failed to fetch user addresses');
       }
     },
-    chat: async (user) => {
+    chatMessages: async (user) => {
       try {
         const userWithChat = await User.findById(user._id).populate('chatMessages');
         return userWithChat.chatMessages;
@@ -4452,7 +4452,7 @@ if (!existingRestaurant) {
         throw new Error('Failed to fetch zone');
       }
     },
-    chat: async (weborder) => {
+    chatMessages: async (weborder) => {
       try {
         const orderWithChat = await Order.findById(weborder._id).populate('chatMessages');
         return orderWithChat.chatMessages;
