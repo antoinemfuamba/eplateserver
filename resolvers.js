@@ -3217,14 +3217,7 @@ if (!existingRestaurant) {
         console.log("Adding chat message to order with orderId:", orderId);
         await chatMessage.save();
             // Push the chat message to the user's chatMessages
-    user.chatMessages.push(chatMessage._id);
-
-    // Push the chat message to the order's chatMessages
-    order.chatMessages.push(chatMessage._id);
-
    
-    await user.save();
-    await order.save();
     
         console.log("Chat message sent successfully for orderId:", orderId);
     
