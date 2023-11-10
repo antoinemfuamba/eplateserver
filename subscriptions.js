@@ -25,7 +25,7 @@ const subscriptionResolvers = {
       },
      orderStatusChanged: {
          subscribe: withFilter(
-          () => pubsub.asyncIterator('ORDER_STATUS_CHANGED'),
+          (context) =>{ context.pubsub.asyncIterator('ORDER_STATUS_CHANGED')},
           (payload, variables) => {
             return payload.orderStatusChanged.userId === variables.userId;
           }
