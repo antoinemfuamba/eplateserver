@@ -1243,7 +1243,8 @@ console.log(order);
             { riderId: context.userId },
             { userId: context.userId },
           ],
-        });
+        })
+        .sort({ createdAt: 1 }); // Sort by createdAt in ascending order (or -1 for descending)
 
         // Transform the data to match the expected shape in your GraphQL schema
         const formattedMessages = messages.map(message => ({
