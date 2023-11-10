@@ -59,7 +59,10 @@ const orderSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref:'reviews',
     },
-
+    chatMessages: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref:'ChatMessage',
+    },
     restaurant:{
       type: mongoose.Schema.Types.ObjectId,
       ref:'restaurants'

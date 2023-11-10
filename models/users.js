@@ -112,7 +112,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     
   },
-
+  chatMessages: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref:'ChatMessage',
+  },
   emailIsVerified: {
     type: Boolean,
    

@@ -550,6 +550,7 @@ input EmailConfigurationInput {
     isPickedUp: Boolean
     isRiderRinged: Boolean
     preparationTime: String
+    chat: [ChatMessage]
   }
 
   type CreateFoodResponse {
@@ -826,6 +827,7 @@ scalar minute
     updatedAt: String!
     userType: String!
     restaurants: [Restaurant!]!
+    chat: [ChatMessage]
   }
 
   input UserInput {

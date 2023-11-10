@@ -3216,9 +3216,15 @@ if (!existingRestaurant) {
     
         console.log("Adding chat message to order with orderId:", orderId);
     
-        order.chatMessages.push(chatMessage._id);
-        await chatMessage.save();
-        await order.save();
+            // Push the chat message to the user's chatMessages
+    user.chatMessages.push(chatMessage._id);
+
+    // Push the chat message to the order's chatMessages
+    order.chatMessages.push(chatMessage._id);
+
+    await chatMessage.save();
+    await user.save();
+    await order.save();
     
         console.log("Chat message sent successfully for orderId:", orderId);
     
@@ -4225,6 +4231,14 @@ if (!existingRestaurant) {
         throw new Error('Failed to fetch user addresses');
       }
     },
+    chat: async (user) => {
+      try {
+        const userWithChat = await User.findById(user._id).populate('chatMessages');
+        return userWithChat.chatMessages;
+      } catch (error) {
+        throw new Error('Failed to fetch chat messages');
+      }
+    },
   },
   Order: {
     user: async (order) => {
@@ -4436,6 +4450,14 @@ if (!existingRestaurant) {
       } catch (error) {
         console.error('Failed to fetch zone:', error);
         throw new Error('Failed to fetch zone');
+      }
+    },
+    chat: async (weborder) => {
+      try {
+        const orderWithChat = await Order.findById(weborder._id).populate('chatMessages');
+        return orderWithChat.chatMessages;
+      } catch (error) {
+        throw new Error('Failed to fetch chat messages');
       }
     },
   },
