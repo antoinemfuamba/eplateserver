@@ -1245,10 +1245,10 @@ console.log(order);
 console.log("The messages:",messages)
         // Transform the data to match the expected shape in your GraphQL schema
         const formattedMessages = messages.map(message => ({
-          _id: message._id.$oid,
+          _id: message._id,
           message: message.message,
           user: {
-            _id: message.user._id.$oid,
+            _id: message.user._id,
             name: message.user.name,
           },
           createdAt: new Date(message.createdAt.$date).toISOString(),
