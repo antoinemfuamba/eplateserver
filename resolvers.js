@@ -1237,14 +1237,11 @@ console.log(order);
 
 
         // Logic to fetch chat messages based on the provided order and user
-        const messages = await ChatMessage.find({
-          orderId: order,
-          $or: [
-            { riderId: context.userId },
-            { userId: context.userId },
-          ],
-        })
-        .sort({ createdAt: 1 }); // Sort by createdAt in ascending order (or -1 for descending)
+    // Logic to fetch chat messages based on the provided order
+    const messages = await ChatMessage.find({
+      orderId: order,
+    }).sort({ createdAt: 1 }); // Sort by createdAt in ascending order (or -1 for descending)
+
 console.log("The messages:",messages)
         // Transform the data to match the expected shape in your GraphQL schema
         const formattedMessages = messages.map(message => ({
