@@ -92,7 +92,7 @@ const subscriptionResolvers = {
           },
           (payload, variables) => {
             // Ensure the payload is sent only to subscribers who are interested in updates for the specified order
-            return payload.subscriptionNewMessage.order === variables.order;
+            return payload.subscriptionNewMessage.orderId === variables.order;
           }
         ),
       },
