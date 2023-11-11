@@ -1251,7 +1251,7 @@ console.log("The messages:",messages)
             _id: message.user._id,
             name: message.user.name,
           },
-          createdAt: new Date(message.createdAt.$date).toISOString(),
+          createdAt: message.createdAt,
         }));
 
         return formattedMessages;
