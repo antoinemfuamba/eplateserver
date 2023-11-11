@@ -3203,7 +3203,8 @@ if (!existingRestaurant) {
           console.error("Order not found with orderId:", orderId);
           throw new Error("Order not found");
         }
-    
+        const createdAt = new Date().toLocaleString(); // This will use the default locale and format
+
         const chatMessage = new ChatMessage({
           message: messageInput.message,
           user: {
@@ -3211,9 +3212,10 @@ if (!existingRestaurant) {
             name: sender.name, // Set the sender's name from the context
           },
           orderId: orderId,
-          createdAt: new Date(),
+          createdAt,
         });
-    
+    // Inside your resolver:
+
         console.log("Adding chat message to order with orderId:", orderId);
         await chatMessage.save();
             // Push the chat message to the user's chatMessages
