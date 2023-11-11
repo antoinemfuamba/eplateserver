@@ -2179,9 +2179,13 @@ console.log("The messages:",messages)
   emailExist: async (_, { email }) => {
     try {
       const user = await Owner.findOne({ email });
-      return { id: user ? user.id : null }; // Return the user's ID or null if not found
+      if (user) {
+        return { _id: user._id };
+      } else {
+        return { _id: null };
+      }
     } catch (error) {
-      console.error(error);
+      console.error('Error checking email existence:', error);
       throw new Error('Failed to check email existence');
     }
   },
