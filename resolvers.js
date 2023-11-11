@@ -3217,14 +3217,20 @@ if (!existingRestaurant) {
     // Inside your resolver:
 
         console.log("Adding chat message to order with orderId:", orderId);
-       const chat = await chatMessage.save();
+       await chatMessage.save();
             // Push the chat message to the user's chatMessages
    
     
         console.log("Chat message sent successfully for orderId:", orderId);
     
         context.pubsub.publish('CHAT_MESSAGE_SENT', {
-          subscriptionNewMessage: chat,
+          subscriptionNewMessage: {
+            _id: chatMessage._id,
+            orderId,
+            message: chatMessage.message,
+            user: chatMessage.user, // Send user details
+            createdAt: chatMessage.createdAt,
+          }
         });
     
         return {
