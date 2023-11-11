@@ -1245,7 +1245,7 @@ console.log(order);
           ],
         })
         .sort({ createdAt: 1 }); // Sort by createdAt in ascending order (or -1 for descending)
-
+console.log("The messages:",messages)
         // Transform the data to match the expected shape in your GraphQL schema
         const formattedMessages = messages.map(message => ({
           _id: message._id.$oid,
