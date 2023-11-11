@@ -2175,21 +2175,23 @@ console.log("The messages:",messages)
       throw new Error('Failed to logout');
     }
   },
-  //Done
-  emailExist: async (_, { email }) => {
-    try {
-      const user = await Owner.findOne({ email });
-      if (user) {
-        return { _id: user._id };
-      } else {
-        return { _id: null };
-      }
-    } catch (error) {
-      console.error('Error checking email existence:', error);
-      throw new Error('Failed to check email existence');
+// Done
+emailExist: async (_, { email }) => {
+  try {
+    const owner = await Owner.findOne({ email });
+    const user = await User.findOne({ email });
+
+    if (owner || user) {
+      return { _id: owner ? owner._id : user._id };
+    } else {
+      return { _id: null };
     }
-  },
-  
+  } catch (error) {
+    console.error('Error checking email existence:', error);
+    throw new Error('Failed to check email existence');
+  }
+},
+
   //DONE
   createSection: async (_, { section }) => {
     try {
