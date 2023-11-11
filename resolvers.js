@@ -3222,12 +3222,7 @@ if (!existingRestaurant) {
         console.log("Chat message sent successfully for orderId:", orderId);
     
         context.pubsub.publish('CHAT_MESSAGE_SENT', {
-          subscriptionNewMessage: {
-            orderId,
-            message: chatMessage.message,
-            user: chatMessage.user, // Send user details
-            createdAt: chatMessage.createdAt,
-          }
+          subscriptionNewMessage: chatMessage,
         });
     
         return {
