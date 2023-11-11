@@ -803,7 +803,7 @@ scalar minute
     
   }
   type User {
-    _id: ID!
+    _id: ID
     userId:ID!
     pushToken: String
     name: String!
