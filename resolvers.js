@@ -2178,12 +2178,12 @@ console.log("The messages:",messages)
 // Done
 emailExist: async (_, { email }) => {
   try {
-    const owner = await Owner.findOne({ email });
     const user = await User.findOne({ email });
 
-    if (owner || user) {
-      return { _id: owner ? owner._id : user._id };
+    if (user) {
+      return { _id: user._id };
     } else {
+      // Handle the case when the user is not found
       return { _id: null };
     }
   } catch (error) {
