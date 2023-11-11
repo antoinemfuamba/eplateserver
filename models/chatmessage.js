@@ -35,7 +35,10 @@ const chatMessageSchema = new mongoose.Schema(
 
 // Add a virtual property for formatted createdAt date
 chatMessageSchema.virtual('formattedCreatedAt').get(function () {
-  return this.createdAt.toLocaleString(); // Customize the formatting as per your preference
+  return new Date(this.createdAt).toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 });
 
 const ChatMessage = mongoose.model('ChatMessage', chatMessageSchema);

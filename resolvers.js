@@ -1232,9 +1232,6 @@ restaurantinfo: async (_, { id }) => {
       throw new Error('Unauthorized');
     }
 
-          // Logic to fetch chat messages based on the provided order
-console.log(order);
-
 
         // Logic to fetch chat messages based on the provided order and user
     // Logic to fetch chat messages based on the provided order
@@ -3209,7 +3206,7 @@ if (!existingRestaurant) {
             name: sender.name, // Set the sender's name from the context
           },
           orderId: orderId,
-          createdAt: new Date().toLocaleString(),
+          createdAt: chatMessage.formattedCreatedAt,
         });
     // Inside your resolver:
 
