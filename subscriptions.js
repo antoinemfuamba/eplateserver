@@ -23,6 +23,8 @@ const subscriptionResolvers = {
           }
         ),
       },
+
+      //DONE
      orderStatusChanged: {
          subscribe: withFilter(
           (_,context) =>{ 
@@ -34,6 +36,8 @@ const subscriptionResolvers = {
           }
         ),
       },
+
+
     subscribePlaceOrder: {
         subscribe: withFilter(
           (_, { restaurant }, context) => {
@@ -75,6 +79,8 @@ const subscriptionResolvers = {
           }
         ),
       },
+
+      //DONE
       subscriptionNewMessage: {
         // Define the subscribe resolver function
         subscribe: withFilter(

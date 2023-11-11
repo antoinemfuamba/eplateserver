@@ -3174,7 +3174,7 @@ if (!existingRestaurant) {
         return { success: false, message: 'Failed to send OTP' };
       }
     },
-
+//DONE
     sendChatMessage: async (_, { orderId, messageInput }, context) => {
       try {
         const { userId } = context;
@@ -4003,7 +4003,7 @@ if (!existingRestaurant) {
           }
     },
     //DONE
-    acceptOrder: async (_, { _id, time }) => {
+    acceptOrder: async (_, { _id, time },context) => {
       try {
         // Validate inputs and perform necessary checks
 
@@ -4031,7 +4031,7 @@ if (!existingRestaurant) {
         // Save the updated order
         const updatedOrder = await order.save();
     // Now, publish the order status change
-    pubsub.publish('ORDER_STATUS_CHANGED', {
+    context.pubsub.publish('ORDER_STATUS_CHANGED', {
       orderStatusChanged: {
         userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
         origin: 'order_accepted',
@@ -4064,7 +4064,7 @@ if (!existingRestaurant) {
         // Save the updated order
         const updatedOrder = await order.save();
     // Now, publish the order status change
-    pubsub.publish('ORDER_STATUS_CHANGED', {
+    context.pubsub.publish('ORDER_STATUS_CHANGED', {
       orderStatusChanged: {
         userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
         origin: 'order_cancelled',
@@ -4103,6 +4103,15 @@ if (!existingRestaurant) {
         order: updatedOrder,
       },
     });
+        // Now, publish the order status change
+        pubsub.publish('ORDER_STATUS_CHANGED', {
+          subscriptionOrder: {
+            userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
+            origin: 'order_picked',
+            orderStatus: 'PICKED',
+            order: updatedOrder,
+          },
+        });
         return updatedOrder;
       } catch (error) {
         console.error(error);
