@@ -3206,7 +3206,6 @@ if (!existingRestaurant) {
             name: sender.name, // Set the sender's name from the context
           },
           orderId: orderId,
-          createdAt: chatMessage.formattedCreatedAt,
         });
     // Inside your resolver:
 
@@ -3223,7 +3222,7 @@ if (!existingRestaurant) {
             orderId,
             message: chatMessage.message,
             user: chatMessage.user, // Send user details
-            createdAt: chatMessage.createdAt,
+            createdAt: chatMessage.formattedCreatedAt,
           }
         });
     
