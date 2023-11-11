@@ -190,7 +190,7 @@ input EmailConfigurationInput {
   }
 
   type ChatMessage {
-    _id: ID!
+    _id: ID
     orderId: ID!
     message: String!
     user: User!
