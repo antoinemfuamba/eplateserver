@@ -3,6 +3,7 @@ const Zone = require('../models/zone');
 const Location = require('../models/locations');
 const Restaurant = require('../models/restaurants');
 const turf = require('@turf/turf');
+//const PayFast = require('payfast');
 
 function convertUtcToJohannesburg(utcTime) {
     const utcMoment = moment.utc(utcTime);
@@ -24,6 +25,53 @@ function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
   const d = R * c * 1000; // Distance in meters
   return d;
 }
+
+// Function to check PayFast payment status
+/*async function checkPayFastPaymentStatus(order) {
+  try {
+    // Retrieve necessary details from the order
+    const orderId = order.orderId; // Replace this with the actual field from your order schema
+    const amount = order.orderAmount; // Replace this with the actual field from your order schema
+    const paymentStatus = order.paymentStatus; // Replace this with the actual field from your order schema
+
+    // Get the PayFast configuration
+    const payfastConfig = {
+      merchantId: 'YOUR_MERCHANT_ID', // Replace with your PayFast merchant ID
+      merchantKey: 'YOUR_MERCHANT_KEY', // Replace with your PayFast merchant key
+      passphrase: 'YOUR_PASSPHRASE', // Replace with your PayFast passphrase
+      sandbox: true, // Set to false for production
+    };
+
+    // Create a PayFast instance with the configuration
+    //const payfast = PayFast(payfastConfig);
+
+    // Check if the order payment status is already 'PAID'
+    if (paymentStatus === 'PAID') {
+      // If already paid, return true
+      return true;
+    }
+
+    // Use PayFast IPN (Instant Payment Notification) to verify payment status
+    const isValid = await payfast.validateIPN({
+      payment_id: orderId,
+      amount,
+    });
+
+    // If PayFast validation is successful, update the order status to 'PAID'
+    if (isValid) {
+      order.paymentStatus = 'PAID';
+      await order.save();
+      return true;
+    }
+
+    // If validation fails or payment status is not 'PAID', return false
+    return false;
+  } catch (error) {
+    console.error('Error checking PayFast payment status:', error);
+    return false;
+  }
+}
+*/
 
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
@@ -175,6 +223,10 @@ function isPointInsidePolygon(point, polygon) {
   }
   return inside;
 }
+function generateRandomId() {
+  // Generate a random number between 100000 and 999999
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
 
   module.exports = {
     convertUtcToJohannesburg,
@@ -184,5 +236,7 @@ function isPointInsidePolygon(point, polygon) {
     fetchRiderLocation, // Include the fetchRiderLocation function
     updateRiderLocation, // Include the updateRiderLocation function
     isLocationWithinZone,
-    assignZoneToRestaurant
+    assignZoneToRestaurant,
+    //checkPayFastPaymentStatus,
+    generateRandomId
   };  

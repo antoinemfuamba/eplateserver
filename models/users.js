@@ -112,6 +112,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     
   },
+  googleId: {
+    type: String,  // New field for storing Google ID
+  },
   chatMessages: {
     type: mongoose.Schema.Types.ObjectId,
     ref:'ChatMessages',

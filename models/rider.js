@@ -36,6 +36,14 @@ const riderSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
+  isRiderRinged: {
+    type: Boolean,
+    required: false,
+  },
+  isRiderRinged: {
+    type: Boolean,
+    required: false,
+  },
   zone:
     {
     type: mongoose.Schema.Types.ObjectId,

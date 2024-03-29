@@ -512,6 +512,7 @@ input EmailConfigurationInput {
     isRinged: Boolean
     isRingMuted: Boolean
     preparationTime: String
+    paypalOrderId: String 
   }
 
   
@@ -667,6 +668,7 @@ input EmailConfigurationInput {
     phone: String!
     available: Boolean!
     zone: Zone!
+    isRiderRinged: Boolean!
     accountNumber: String
     currentWalletAmount: Float
     totalWalletAmount: Float
@@ -755,7 +757,7 @@ scalar minute
   }
   type WebSection {
     _id: ID!
-    name: String!
+    name: String
     enabled: Boolean
     restaurants: [ID!]!
   }
@@ -808,6 +810,7 @@ scalar minute
     pushToken: String
     name: String!
     email: String!
+    googleId: String  
     password: String!
     phone: String
     token: String
@@ -1057,13 +1060,13 @@ input OrderFoodInput {
   }
 
   type Earning {
-    rider: Rider!
-    orderId: ID!
-    deliveryFee: Float!
-    orderStatus: String!
-    paymentMethod: String!
-    deliveryTime: String!
-    _id: ID!
+    rider: Rider
+    orderId: ID
+    deliveryFee: Float
+    orderStatus: String
+    paymentMethod: String
+    deliveryTime: String
+    id: ID
   }
   type ToggleResult {
     _id: ID
@@ -1074,6 +1077,7 @@ input OrderFoodInput {
     getUser(id: ID!): Owner
     getUsers: [User]!
     users: [User]!
+    orderPaypal(id: String!): Order
     getDashboardSales(startingDate: String, endingDate: String, restaurant: String): DashboardSales!
     getDashboardOrders(startingDate: String, endingDate: String, restaurant: String): DashboardOrdersResponse!
     getDashboardTotal(startingDate: String, endingDate: String, restaurant: String!): DashboardTotal
@@ -1223,7 +1227,7 @@ input OrderFoodInput {
     updatePromotion(id: ID!, promotionCode: String, discountPercentage: Float, expirationDate: String, associatedFoods: [String]): Promotion
     deletePromotion(id: ID!): Promotion
     ownerLogin(email: String!, password: String!): Owner
-    login(email: String!, password: String!, appleId: String, name: String, notificationToken: String): AuthPayload
+    login(email: String!, password: String!, googleId: String, appleId: String, name: String, notificationToken: String): AuthPayload
     emailExist(email: String!): User
     phoneExist(phone: String): User
     logout: Boolean

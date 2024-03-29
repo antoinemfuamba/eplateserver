@@ -8,6 +8,7 @@ const Promotion = require('./models/promotions');
 const Review = require('./models/reviews');
 const ReviewData = require('./models/reviewData');
 const Delivery = require('./models/delivery');
+//const PayFast = require('payfast'); // Import the PayFast package
 const ChatMessage = require('./models/chatmessage');
 const Restaurant = require('./models/restaurants');
 const Variation = require('./models/variations');
@@ -40,13 +41,17 @@ const pubsub = new PubSub();
 const { AuthenticationError } = require('apollo-server-express');
 const { ObjectId } = require('mongodb');
 const { v4: uuidv4 } = require('uuid');
-const {assignZoneToRestaurant,getDistanceFromLatLonInMeters, generateUniqueCode, isLocationWithinZone} = require('./config/distance');
+const {assignZoneToRestaurant,getDistanceFromLatLonInMeters, generateUniqueCode, isLocationWithinZone, generateRandomId, checkPayFastPaymentStatus} = require('./config/distance');
+const {createPayPalOrder,capturePayPalOrder} = require('./config/paypal');
 const db  = require('./models/db'); // Replace with your database connection code
 const jwt = require('jsonwebtoken');
 const { ApolloError } = require('apollo-server-express');
 const JwtConfig = require("./config/config.json").development;
 const bcrypt = require('bcryptjs');
 const subscriptionResolvers = require('./subscriptions');
+const { OAuth2Client } = require('google-auth-library');
+
+const client = new OAuth2Client('373012747216-0s313cmtv12r93te489qk0s0p2s3pc4j.apps.googleusercontent.com');
 
 const resolvers = {
   ...subscriptionResolvers,
@@ -69,8 +74,10 @@ const resolvers = {
     //DONE
     ridersByZone: async (_, { id }) => {
       try {
+        console.log("The Rider id", id);
         // Find riders in the specified zone by their zone ID
         const riders = await Rider.find({ zone: id }).populate('zone');
+        console.log("The RiderS id", riders);
 
         return riders;
       } catch (error) {
@@ -706,6 +713,8 @@ restaurantinfo: async (_, { id }) => {
         throw new Error('Failed to fetch tips');
       }
     },*/
+
+    //DONE
     getAllWithdrawRequests: async (_, { offset }) => {
       try {
         const withdrawRequests = await WithdrawRequest.find()
@@ -771,6 +780,84 @@ restaurantinfo: async (_, { id }) => {
         throw new Error('Failed to fetch user');
       }
     },
+   /* orderStripe: async (_, { id }, context) => {
+      try {
+        // Fetch the order details from the database using the provided order ID
+        const order = await Order.findById(id);
+
+        if (!order) {
+          throw new Error(`Order with ID ${id} not found`);
+        }
+
+        // Assuming order.paymentMethod is 'CREDIT_CARD'
+        if (order.paymentMethod === 'CREDIT_CARD') {
+          // Check if PayFast payment was successful
+          const isPaymentSuccessful = checkPayFastPaymentStatus(order);
+
+          // Update the order status based on the PayFast payment status
+          order.orderStatus = isPaymentSuccessful ? 'PAID' : 'FAILED';
+
+          // Save the updated order in the database
+          const updatedOrder = await order.save();
+
+          return updatedOrder;
+        }
+
+        // If payment method is not 'CREDIT_CARD', return the order as is
+        return order;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch order details');
+      }
+    },*/
+    orderPaypal: async (_, { id }) => {
+      try {
+        // Fetch the order from the database based on the provided ID
+        const order = await Order.findById(id);
+
+        if (!order) {
+          throw new Error('Order not found');
+        }
+
+        // Transform the order data as needed
+        const transformedOrder = {
+          _id: order._id,
+          restaurant: {
+            _id: order.restaurant._id,
+            name: order.restaurant.name,
+            image: order.restaurant.image,
+            slug: order.restaurant.slug,
+            address: order.restaurant.address,
+            location: {
+              coordinates: order.restaurant.location.coordinates,
+            },
+          },
+          deliveryAddress: {
+            location: {
+              coordinates: order.deliveryAddress.location.coordinates,
+            },
+            deliveryAddress: order.deliveryAddress.deliveryAddress,
+            details: order.deliveryAddress.details,
+            label: order.deliveryAddress.label,
+          },
+          deliveryCharges: order.deliveryCharges,
+          orderId: order.orderId,
+          user: {
+            _id: order.user._id,
+            phone: order.user.phone,
+            email: order.user.email,
+            name: order.user.name,
+          },
+          // Include other fields as needed
+        };
+
+        return transformedOrder;
+      } catch (error) {
+        console.error('Error fetching orderPaypal:', error);
+        throw new Error('Failed to fetch orderPaypal');
+      }
+    },
+      //DONE
     userFavourite: async (_, { latitude, longitude },context) => {
       try {
         const {userId} = context;
@@ -889,7 +976,7 @@ restaurantinfo: async (_, { id }) => {
         }
 
         // After fetching the rider, activate the subscription for this rider's location
-        pubsub.publish(`RIDER_LOCATION_${rider._id}`, { subscriptionRiderLocation: rider });
+        context.pubsub.publish(`RIDER_LOCATION_${rider._id}`, { subscriptionRiderLocation: rider });
 
         return rider;
       } catch (error) {
@@ -930,7 +1017,7 @@ restaurantinfo: async (_, { id }) => {
       }
     },
     //DONE
-    nearByRestaurants: async (_, { longitude, latitude }) => {
+   /* nearByRestaurants: async (_, { longitude, latitude }) => {
   try {
     // Ensure that the latitude and longitude are provided
     if (!latitude || !longitude) {
@@ -1005,6 +1092,132 @@ restaurantinfo: async (_, { id }) => {
     throw new Error("Failed to fetch Restaurants");
   }
     },
+    */
+   
+   // Done This One Does Not Repeat the Restaurants, Havent been tested in Mobile
+    nearByRestaurants: async (_, { longitude, latitude }) => {
+      try {
+        // Ensure that the latitude and longitude are provided
+        if (!latitude || !longitude) {
+          throw new Error('Latitude and longitude must be provided.');
+        }
+    
+        // Find all restaurants
+        const allRestaurants = await Restaurant.find();
+    
+        // Calculate the maximum distance to consider a restaurant as nearby (in meters)
+        const maxDistance = 5000; // Adjust this value as per your requirement
+    
+        // Filter nearby restaurants based on the distance from the user's location
+        const nearbyRestaurants = [];
+        for (const restaurant of allRestaurants) {
+          // Fetch the location document using the ObjectId reference in the restaurant document
+          const location = await Locat.findById(restaurant.location);
+    
+          // Ensure that the location is found and contains the coordinates
+          if (!location || !location.coordinates) {
+            // Handle cases where the location or coordinates are missing
+            continue;
+          }
+    
+          const restaurantLat = location.coordinates[1];
+          const restaurantLong = location.coordinates[0];
+    
+          // Calculate the distance between the user's location and the restaurant's location
+          const distance = getDistanceFromLatLonInMeters(latitude, longitude, restaurantLat, restaurantLong);
+          console.log('Distance in meters:', distance);
+    
+          // If the distance is less than or equal to the maximum distance, include the restaurant in nearbyRestaurants
+          if (distance <= maxDistance) {
+            // Exclude __typename from the restaurant data
+            nearbyRestaurants.push({
+              ...restaurant.toObject(),
+              _id: restaurant._id.toString(),
+              sections: restaurant.sections.map(section => section.toString()), // Convert ObjectId to string for sections array
+            });
+          }
+        }
+
+        // Fetch offers for all nearby restaurants in parallel
+        const offers = await Promise.all(
+          nearbyRestaurants.map(async (restaurant) => {
+            return await Offer.find({ restaurants: restaurant._id });
+          })
+        );
+    
+        // Fetch sections for all nearby restaurants in parallel
+        const restaurantIds = new Set(nearbyRestaurants.map((restaurant) => restaurant._id));
+        const sections = await Section.find({ 'restaurants': { $in: Array.from(restaurantIds) } });
+    
+        /*
+        const sections = await Promise.all(
+          uniqueSectionIds.map(async (sectionId) => {
+            console.log(`Fetching section with ID: ${sectionId}`);
+            
+            const section = await Section.findById(sectionId);
+            if (section) {
+              const sectionRestaurants = section.restaurants.map(restaurant => restaurant.toString());
+              console.log(`Section ${section.name} has nearby restaurants: ${sectionRestaurants.join(', ')}`);
+        
+              return {
+                _id: section._id.toString(),
+                name: section.name,
+                enabled: section.enabled,
+                restaurants: sectionRestaurants,
+              };
+            }
+            return null;
+          })
+        );*/
+        
+// Fetch sections for all nearby restaurants in parallel
+// Fetch sections for all nearby restaurants in parallel
+//const sectionIds = new Set(nearbyRestaurants.flatMap((restaurant) => restaurant.sections.map(String)));
+
+// console.log('All Section IDs:', Array.from(sectionIds));
+
+// Fetch sections for all nearby restaurants in parallel
+
+const flattenedSections = sections
+      .filter((section) => section !== null)
+      .map((section) => ({
+        _id: section._id.toString(),
+        name: section.name,
+        enabled: section.enabled,
+        restaurants: section.restaurants.map(restaurant => restaurant.toString()),
+      }));
+
+// Filter out null sections
+
+console.log('Filtered Sections:', flattenedSections);
+
+
+        // Fetch global options and addons data
+        const options = await Promise.all(
+          nearbyRestaurants.map(async (restaurant) => {
+            return await Option.find({ restaurants: restaurant._id });
+          })
+        );
+    
+        const addons = await Promise.all(
+          nearbyRestaurants.map(async (restaurant) => {
+            return await Addon.find({ restaurants: restaurant._id });
+          })
+        );
+    
+        return {
+          offers: offers.flat(), // Convert the array of arrays to a single flat array
+          sections: flattenedSections, // Filter out null sections
+          restaurants: nearbyRestaurants,
+          options: options.flat(),
+          addons: addons.flat(),
+        };
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch Restaurants');
+      }
+    },
+    
     taxes: async () => {
       try {
         const taxes = await Tax.find();
@@ -1187,24 +1400,56 @@ restaurantinfo: async (_, { id }) => {
                 path: 'rider',
                 select: '_id name username',
               });
-        
+            /*  context.pubsub.publish('ORDER_STATUS_CHANGED', {
+                subscriptionZoneOrders: {
+                  _id: orders._id,
+                  orderStatus: orders.orderStatus,
+                  rider: orders.rider,
+                },
+              });
+              //return orders
+        if(orders){
+          orders.isRiderRinged = true;
+          await orders.save;
             return orders;
+        }else {
+          throw new Error('Failed to fetch rider orders')
+        }
           } catch (error) {
             console.error(error);
             throw new Error('Failed to fetch rider orders');
           }
-        },
-        
-        riderEarnings: async (_, { riderEarningsId, offset }) => {
+        },*/
+        return orders;
+      } catch (error) {
+        console.error(error);
+        throw new Error('Failed to fetch rider orders');
+      }
+    },
+        riderEarnings: async (_, { riderEarningsId, offset }, context) => {
         try {
-          // Logic to fetch rider earnings based on the provided riderEarningsId and offset
+          if (!riderEarningsId){
+            riderEarningsId = context.userId;
 
-          // Example code to fetch earnings from a database
-          const earnings = await Earning.find({ riderEarningsId })
-            .skip(offset)
-            .limit(10);
+          }
+          console.log("The rider Earnings ID", riderEarningsId);
 
-          return earnings;
+            // Assuming riderEarningsId is the userId
+            const orders = await Order.find({ rider: riderEarningsId })
+              .sort({ createdAt: -1 }) // Sort by createdAt in descending order
+              .skip(offset)
+              .limit(10); // Adjust the limit as needed
+            console.log("The rider Earnings orders", orders);
+            // Extract and return the necessary fields
+            const formattedData = orders.map((order) => ({
+              orderId: order.orderId,
+              deliveryFee: order.deliveryCharges,
+              orderStatus: order.orderStatus,
+              paymentMethod: order.paymentMethod,
+              deliveryTime: order.deliveredAt, // Assuming deliveredAt is the delivery time
+            }));
+    
+            return formattedData;
         } catch (error) {
           console.error(error);
           throw new Error('Failed to fetch rider earnings');
@@ -1213,7 +1458,7 @@ restaurantinfo: async (_, { id }) => {
         riderWithdrawRequests: async (_, { riderWithdrawRequestsId, offset }) => {
         try {
           // Logic to fetch rider withdraw requests based on the provided riderWithdrawRequestsId and offset
-
+          console.log("Checking the withdraw ID", riderWithdrawRequestsId);
           // Example code to fetch withdraw requests from a database
           const withdrawRequests = await WithdrawRequest.find({ riderWithdrawRequestsId })
             .skip(offset)
@@ -1372,7 +1617,7 @@ console.log("The messages:",messages)
         /****************************************************************************************************************************
                                         ADMIN MUTATIONS - START
     *****************************************************************************************************************************/
-
+    //Done
     updateWithdrawReqStatus: async (_, { id, status }) => {
 
       // Perform the update and fetch necessary data from your database
@@ -1383,9 +1628,8 @@ console.log("The messages:",messages)
           { status },
           { new: true }
         );
-
         // Fetch rider data and update wallet amount
-        const rider = await Rider.findById(updatedWithdrawRequest.userId);
+        const rider = await Rider.findById(updatedWithdrawRequest.rider);
         rider.currentWalletAmount -= updatedWithdrawRequest.amount;
         await rider.save();
 
@@ -2220,12 +2464,19 @@ emailExist: async (_, { email }) => {
       // Save the changes to the section
       await newSection.save();
   
+      // Update the sections field in the associated restaurants
+      await Restaurant.updateMany(
+        { _id: { $in: section.restaurants } },
+        { $push: { sections: newSection._id } }
+      );
+  
       return newSection;
     } catch (error) {
       // Handle any errors
       throw new Error(`Failed to create section: ${error.message}`);
     }
   },
+  
   //DONE
   editSection: async (_, { section }) => {
     try {
@@ -2622,7 +2873,7 @@ emailExist: async (_, { email }) => {
     }
   },
   //DONE
-  updateStatus: async (_, { id, orderStatus }) => {
+  updateStatus: async (_, { id, orderStatus },context) => {
     try {
       // Find the order by the provided ID
       const order = await Order.findById(id);
@@ -2631,7 +2882,7 @@ emailExist: async (_, { email }) => {
       }
 
           // Notify subscribers about the status change
-    pubsub.publish('ORDER_STATUS_CHANGED', {
+    context.pubsub.publish('ORDER_STATUS_CHANGED', {
       subscriptionOrder: {
         _id: order._id,
         orderStatus: order.orderStatus,
@@ -2728,7 +2979,7 @@ emailExist: async (_, { email }) => {
   },
   */
   //DONE
-  assignRider: async (_, { _id, riderId }) => {
+  assignRider: async (_, { _id, riderId },context) => {
     try {
     // Find the order by the provided ID
     const order = await Order.findById(_id);
@@ -2747,14 +2998,6 @@ emailExist: async (_, { email }) => {
       throw new Error('Rider is not available');
     }
 
-      // After successfully assigning the rider, trigger the subscription
-      pubsub.publish('ASSIGN_RIDER', {
-        subscriptionAssignRider: {
-          order, // Include the updated order data
-          origin: 'new' // Indicate that a new assignment occurred
-        }
-      });
-  
     // Assign the rider to the order
     order.rider = rider;
     order.orderStatus = 'ASSIGNED'; // or the desired status
@@ -2773,7 +3016,7 @@ emailExist: async (_, { email }) => {
 
 
         // After successfully assigning the rider, trigger the subscription
-        pubsub.publish(SUBSCRIPTION_ASSIGN_RIDER, {
+        context.pubsub.publish('ASSIGN_RIDER', {
           subscriptionAssignRider: {
             order, // Include the updated order data
             origin: 'new' // Indicate that a new assignment occurred
@@ -3317,6 +3560,8 @@ if (!existingRestaurant) {
 
       // Log the intermediate values
       console.log('Subtotal:', orderTotal);
+      let paypalOrderId;
+
     // Handle pickup orders
     if (isPickedUp) {
       // Set delivery charges to 0 for pickup orders
@@ -3333,7 +3578,7 @@ if (!existingRestaurant) {
 
       // Use the default pickup location as the delivery address
       address = defaultPickupLocation;
-
+    // Create a PayPal order
      // Implement payment processing logic here
      let paymentStatus = 'PENDING';
      if (paymentMethod === 'CREDIT_CARD') {
@@ -3341,11 +3586,35 @@ if (!existingRestaurant) {
        // Example: Call a payment gateway API
        // if successful, set paymentStatus to 'PAID'
        // else, keep it as 'PENDING' or 'FAILED'
+       // Construct the payment URL using PayFast
+          const paymentData = {
+            merchant_id: '22604182',
+            merchant_key: 'gyq5ymkmtga19',
+            return_url: 'YOUR_RETURN_URL', // e.g., 'https://yourwebsite.com/payment-success'
+            cancel_url: 'YOUR_CANCEL_URL', // e.g., 'https://yourwebsite.com/payment-cancel'
+            notify_url: 'YOUR_NOTIFY_URL', // e.g., 'https://yourwebsite.com/payment-notify'
+            name_first: 'CustomerFirstName',
+            name_last: 'CustomerLastName',
+            email_address: 'customer@example.com',
+            cell_number: 'CustomerPhoneNumber',
+            m_payment_id: orderId,
+            amount: orderAmount,
+            item_name: 'Order Payment',
+          };
+                    // Encrypt the payment data to generate the PayFast URL
+         // const encryptedUrl = PayFast.encrypt(paymentData);
+
+          // Include the encrypted URL in your response or redirect the user to this URL
+          console.log('PayFast Encrypted URL:', encryptedUrl);
+
      } else if (paymentMethod === 'PAYPAL') {
        // Implement PayPal payment processing logic here
        // Example: Make an API request to PayPal
        // if successful, set paymentStatus to 'PAID'
        // else, keep it as 'PENDING' or 'FAILED'
+       paypalOrderId = await createPayPalOrder(orderAmount);
+// Capture the payment immediately upon successful order creation
+const captureResult = await capturePayPalOrder(paypalOrderId);
      } else if (paymentMethod === 'COD') {
        // Cash on Delivery (COD) does not require online payment processing
        // Set paymentStatus to 'PAID' immediately
@@ -3456,6 +3725,11 @@ if (!existingRestaurant) {
       // Example: Make an API request to PayPal
       // if successful, set paymentStatus to 'PAID'
       // else, keep it as 'PENDING' or 'FAILED'
+
+            // Create a PayPal order
+            paypalOrderId = await createPayPalOrder(orderAmount);
+            // Capture the payment immediately upon successful order creation
+      const captureResult = await capturePayPalOrder(paypalOrderId);
     } else if (paymentMethod === 'COD') {
       // Cash on Delivery (COD) does not require online payment processing
       // Set paymentStatus to 'PAID' immediately
@@ -3467,6 +3741,7 @@ if (!existingRestaurant) {
       orderId,
       restaurant,
       items,
+      paypalOrderId,
       paymentMethod,
       couponCode,
       tipping,
@@ -3489,7 +3764,7 @@ if (!existingRestaurant) {
     const savedOrder = await newOrder.save();
         // Publish a message to activate the subscription
     // Publish a message to activate the subscription for the restaurant's zone
-    pubsub.publish('ZONE_ORDER_PLACED', {
+    context.pubsub.publish('ZONE_ORDER_PLACED', {
       subscriptionZoneOrders: {
         zoneId: restaurantInfo.zone, // Adjust this based on your data model
         origin: 'new',
@@ -3813,7 +4088,11 @@ if (!existingRestaurant) {
           if (!order) {
             throw new Error('Order not found');
           }
+          const rider = await Rider.findById(order.rider); // Assuming the rider ID is stored in the 'rider' field of the order
 
+          if (!rider) {
+            throw new Error('Rider not found');
+          }
           const currentTime = new Date();
 
           switch (status) {
@@ -3830,6 +4109,14 @@ if (!existingRestaurant) {
             case 'PICKED':
               order.orderStatus = status;
               order.pickedAt = currentTime;
+
+              // Update totalWalletAmount based on delivery charge
+              rider.totalWalletAmount += order.deliveryCharges;
+              if (rider.currentWalletAmount === 0)
+              {
+                  rider.currentWalletAmount = rider.totalWalletAmount;
+              }
+              //rider.currentWalletAmount += order.deliveryCharges;
               break;
       
             case 'DELIVERED':
@@ -3840,6 +4127,14 @@ if (!existingRestaurant) {
             case 'CANCELLED':
               order.orderStatus = status;
               order.cancelledAt = currentTime;
+
+              // Update totalWalletAmount based on delivery charge
+             // rider.totalWalletAmount -= order.deliveryCharges;
+             // rider.currentWalletAmount -= order.deliveryCharges;
+
+             // Update currentWalletAmount
+            //  rider.currentWalletAmount = rider.totalWalletAmount - rider.withdrawnWalletAmount;
+
               break;
       
             default:
@@ -3847,7 +4142,9 @@ if (!existingRestaurant) {
           }
           // Save the updated order
         const updatedOrder = await order.save();
-        
+            // Save the updated order and rider
+    //await order.save();
+    await rider.save();
         return updatedOrder;
         } catch (error) {
           console.error(error);
@@ -3927,30 +4224,43 @@ if (!existingRestaurant) {
       
 
     createWithdrawRequest: async (_, { amount }, context) => {
+      const accountSid = process.env.TWILIO_ACCOUNTSID;
+      const authToken = process.env.TWILIO_AUTHTOKEN;
+      const client = new twilio(accountSid, authToken);
      try{
-        // Check if the user is authenticated as a rider
-        if (!context.isAuthenticated || !context.isRider) {
-          throw new Error('Authentication required');
-        }
-
         // Get the authenticated rider's ID
         const riderId = context.userId;
 
+            // Generate a 6-digit ID
+          const requestId = generateRandomId();
+
         // Create the withdrawal request
         const withdrawRequest = new WithdrawRequest({
-          amount,
+          requestId,
+          requestAmount: amount,
           rider: riderId,
-          status: 'Pending',
+          status: 'PENDING',
           requestTime: new Date()
         });
 
         // Save the withdrawal request
         const createdRequest = await withdrawRequest.save();
 
-        // Populate the rider details in the response
-        await createdRequest.populate('rider', 'name email accountNumber').execPopulate();
+          // Fetch rider details
+          const riderDetails = await Rider.findById(riderId).select('name email accountNumber');
 
-        return createdRequest;
+          // Add rider details to the response
+          createdRequest.rider = riderDetails;
+        // Send the OTP via SMS using Twilio
+        const message = await client.messages.create({
+          body: `Your Cash Withdrawal Request has been received. The funds will be transferred into your account with 2 days`,
+          from: '+16562184338', // Trial Twilio phone number
+          to: riderDetails.phone, // The recipient's phone number
+        });
+    
+        console.log(`OTP sent with SID: ${message.sid}`);
+    
+          return createdRequest;
         } catch (error) {
           console.error(error);
           throw new Error('Failed to create withdraw request');
@@ -3959,9 +4269,26 @@ if (!existingRestaurant) {
     createEarning: async (_, { earningsInput }) => {
         // Check if the user is authenticated (e.g., using context or authorization middleware)
         try {
-          const earning = await Earning.create(earningsInput);
-          return earning;
-        
+            // Check if the user is authenticated (e.g., using context or authorization middleware)
+            
+            // Assuming you have a rider ID associated with the earning
+            const { riderId } = earningsInput;
+    
+            // Create the earning
+            const earning = await Earning.create(earningsInput);
+    
+            // Find the rider associated with the earning
+            const rider = await Rider.findById(riderId);
+    
+            if (!rider) {
+              throw new Error(`Rider with ID ${riderId} not found`);
+            }
+    
+            // Associate the earning with the rider
+            rider.earnings.push(earning);
+            await rider.save();
+    
+            return earning;
         } catch (error) {
           console.error(error);
           throw new Error('Failed to create earning');
@@ -4101,7 +4428,7 @@ if (!existingRestaurant) {
         // Save the updated order
         const updatedOrder = await order.save();
     // Now, publish the order status change
-    pubsub.publish('ORDER_STATUS_CHANGED', {
+    context.pubsub.publish('ORDER_STATUS_CHANGED', {
       orderStatusChanged: {
         userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
         origin: 'order_picked',
@@ -4110,7 +4437,7 @@ if (!existingRestaurant) {
       },
     });
         // Now, publish the order status change
-        pubsub.publish('ORDER_STATUS_CHANGED', {
+        context.pubsub.publish('ORDER_STATUS_CHANGED', {
           subscriptionOrder: {
             userId: updatedOrder.user._id, // Use the user's ID from the updatedOrder
             origin: 'order_picked',

@@ -6,7 +6,7 @@ const withdrawRequestSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  amount: {
+  requestAmount: {
     type: Number,
     required: true
   },
@@ -16,7 +16,9 @@ const withdrawRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true
+    required: true,
+    enum: ["PENDING", "REQUESTED", "TRANSFERRED","CANCELLED"],
+    default: "PENDING",
   },
   rider: {
     type: mongoose.Schema.Types.ObjectId,

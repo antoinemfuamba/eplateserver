@@ -16,6 +16,10 @@ const orderSchema = new mongoose.Schema({
   paidAmount:{
     type: Number,
   },
+  paypalOrderId: {
+    type: String,
+    default: null, // You can set a default value if needed
+  },
   paymentMethod: {
     type: String,
   },
