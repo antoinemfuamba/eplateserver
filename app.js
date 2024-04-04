@@ -14,7 +14,7 @@ const cors = require('cors');
 const ws = require('ws');
 const http = require('http');
 var app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8080;
 require('dotenv').config();
 const JwtConfig = require('./config/config.json').development;
 const jwt = require('jsonwebtoken');
@@ -23,9 +23,9 @@ const executableSchema = makeExecutableSchema({ typeDefs, resolvers });
 // Define an array of allowed origins
 const allowedOrigins = [
 'http://localhost:3000',
-'http://localhost:3001','http://localhost:5000','ws://localhost:5000','https://admin.kizuri.co.za','https://iplate.kizuri.co.za','wss://admin.kizuri.co.za','wss://iplate.kizuri.co.za',
-'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png',  'https://kizuri-production.up.railway.app/',
-'wss://kizuri-production.up.railway.app/',
+'http://localhost:3001','http://localhost:5000','ws://localhost:5000','https://admin.kizuri.co.za','https://e-plate.kizuri.co.za','wss://admin.kizuri.co.za','wss://e-plate.kizuri.co.za',
+'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png',  'https://eplateserver.fly.dev/',
+'wss://eplateserver.fly.dev/',
 ];
 // Set Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy headers
 app.use((req, res, next) => {
