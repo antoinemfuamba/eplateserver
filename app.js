@@ -24,8 +24,8 @@ const executableSchema = makeExecutableSchema({ typeDefs, resolvers });
 const allowedOrigins = [
 'http://localhost:3000',
 'http://localhost:3001','http://localhost:5000','ws://localhost:5000','https://admin.kizuri.co.za','https://e-plate.kizuri.co.za','wss://admin.kizuri.co.za','wss://e-plate.kizuri.co.za',
-'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png',  'https://eplateserver.fly.dev/',
-'wss://eplateserver.fly.dev/',
+'https://www.lifcobooks.com/wp-content/themes/shopchild/images/placeholder_book.png',  'https://e-plate.adaptable.app/',
+'wss://e-plate.adaptable.app/',
 ];
 // Set Cross-Origin-Opener-Policy and Cross-Origin-Embedder-Policy headers
 app.use((req, res, next) => {
