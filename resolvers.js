@@ -2522,7 +2522,7 @@ emailExist: async (_, { email }) => {
     //Done
   phoneExist: async (_, { phone }) => {
       try {
-        const user = await Owner.findOne({ phone });
+        const user = await User.findOne({ phone });
         return { id: user ? user.id : ''}; // Return the user's ID or null if not found
       } catch (error) {
         console.error(error);
@@ -2535,7 +2535,7 @@ emailExist: async (_, { email }) => {
         throw new Error('User not authenticated');
       }
   
-      const updatedUser = await Owner.findByIdAndUpdate(
+      const updatedUser = await User.findByIdAndUpdate(
         user.id,
         { name, phoneIsVerified, emailIsVerified },
         { new: true }
